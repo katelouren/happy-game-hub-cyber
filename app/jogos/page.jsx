@@ -15,7 +15,7 @@ import { useActivity } from "@/hooks/useActivity";
 import { toggleGameInterest } from "@/lib/activityStore";
 import localGames from "../../data/games.json";
 
-const API_URL = "https://www.freetogame.com/api/games";
+const API_URL = "/api/games";
 const API_TIMEOUT_MS = 8000;
 const API_ATTEMPTS = 2;
 
