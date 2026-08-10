@@ -25,20 +25,23 @@ export default function ApiGameCard({
   onToggleInterest,
 }) {
   const [failedImage, setFailedImage] = useState("");
-  const hasValidImage = Boolean(thumbnail) && failedImage !== thumbnail;
+  const coverUrl = thumbnail
+    ? `/api/game-image?url=${encodeURIComponent(thumbnail)}`
+    : "";
+  const hasValidImage = Boolean(coverUrl) && failedImage !== coverUrl;
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-800 bg-[#061225] transition hover:border-lime-400/50 hover:shadow-[0_18px_50px_rgba(0,0,0,0.2)] focus-within:border-lime-400/60">
       <div className="relative h-48 overflow-hidden bg-[#020817]">
         {hasValidImage ? (
           <Image
-            src={thumbnail}
+            src={coverUrl}
             alt={`Capa do jogo ${title}`}
             fill
             loading={priority ? "eager" : "lazy"}
             sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
             className="object-cover transition duration-300 group-hover:scale-[1.03]"
-            onError={() => setFailedImage(thumbnail)}
+            onError={() => setFailedImage(coverUrl)}
           />
         ) : (
           <div className="flex h-full flex-col items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(163,230,53,0.14),_transparent_65%)] px-6 text-center">
