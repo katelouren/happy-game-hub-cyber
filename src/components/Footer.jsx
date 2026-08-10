@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer className="mt-20 border-t border-slate-800 py-8 text-center text-slate-500">
-      © 2026 Happy Game Hub • Projeto Acadêmico de Kate Lourenço - FIAP
+    <footer className="mx-auto mt-10 max-w-7xl border-t border-slate-800 px-4 py-8 text-center text-sm text-slate-500 sm:px-6 lg:px-8">
+      © 2026 Happy Game Hub • Projeto Acadêmico de Kate Lourenço — FIAP
     </footer>
   );
 }

@@ -3,14 +3,14 @@ import { Brain, ShieldCheck, Sparkles, Gamepad2 } from "lucide-react";
 export default function Sobre() {
   return (
     <main className="min-h-screen bg-[#020817] text-white">
-      <section className="mx-auto max-w-6xl px-8 py-12">
+      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
 
-        <div className="rounded-3xl border border-slate-800 bg-[#061225] p-10">
+        <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-10">
           <p className="mb-4 inline-block rounded-md border border-lime-400 px-4 py-2 text-xs font-bold uppercase tracking-widest text-lime-400">
             Sobre o projeto
           </p>
 
-          <h1 className="mb-6 text-5xl font-extrabold">
+          <h1 className="mb-6 text-3xl font-extrabold sm:text-4xl lg:text-5xl">
             Conheça o Happy Game Hub
           </h1>
 
@@ -22,7 +22,7 @@ export default function Sobre() {
 
         <section className="mt-12 grid gap-8 md:grid-cols-2">
 
-          <div className="rounded-3xl border border-slate-800 bg-[#061225] p-8">
+          <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-8">
             <Brain size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
@@ -36,7 +36,7 @@ export default function Sobre() {
             </p>
           </div>
 
-          <div className="rounded-3xl border border-slate-800 bg-[#061225] p-8">
+          <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-8">
             <ShieldCheck size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
@@ -50,7 +50,7 @@ export default function Sobre() {
             </p>
           </div>
 
-          <div className="rounded-3xl border border-slate-800 bg-[#061225] p-8">
+          <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-8">
             <Sparkles size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
@@ -58,13 +58,13 @@ export default function Sobre() {
             </h2>
 
             <p className="text-slate-300 leading-relaxed">
-              Em versões futuras, recursos de Inteligência Artificial poderão
-              analisar preferências e sugerir jogos personalizados para cada
-              perfil de usuário.
+              Preferências e interações salvas localmente ajudam a organizar
+              recomendações transparentes, com motivos e habilidades relacionadas
+              a cada sugestão.
             </p>
           </div>
 
-          <div className="rounded-3xl border border-slate-800 bg-[#061225] p-8">
+          <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-8">
             <Gamepad2 size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
@@ -79,7 +79,7 @@ export default function Sobre() {
 
         </section>
 
-        <section className="mt-12 rounded-3xl border border-lime-400/20 bg-[#061225] p-10 text-center">
+        <section className="mt-12 rounded-3xl border border-lime-400/20 bg-[#061225] p-6 text-center sm:p-10">
 
           <h2 className="mb-4 text-3xl font-extrabold">
             Projeto Acadêmico de Kate Lourenço - FIAP

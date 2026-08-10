@@ -2,33 +2,79 @@
   {
     "id": 1,
     "nome": "Minecraft",
+    "title": "Minecraft",
     "categoria": "Criatividade",
+    "genre": "Criatividade",
     "idade": "Livre",
     "beneficio": "Estimula criatividade, construção e resolução de problemas.",
-    "risco": "Uso excessivo pode gerar sedentarismo."
+    "risco": "Uso excessivo pode gerar sedentarismo.",
+    "platform": "PC, consoles e dispositivos móveis",
+    "thumbnail": null,
+    "game_url": "https://www.minecraft.net/pt-br"
   },
   {
     "id": 2,
     "nome": "Portal 2",
+    "title": "Portal 2",
     "categoria": "Raciocínio",
+    "genre": "Raciocínio",
     "idade": "10+",
     "beneficio": "Desenvolve lógica e pensamento crítico.",
-    "risco": "Pode gerar frustração em desafios complexos."
+    "risco": "Pode gerar frustração em desafios complexos.",
+    "platform": "PC e consoles",
+    "thumbnail": null,
+    "game_url": "https://store.steampowered.com/app/620/Portal_2/"
   },
   {
     "id": 3,
     "nome": "Stardew Valley",
+    "title": "Stardew Valley",
     "categoria": "Planejamento",
+    "genre": "Planejamento",
     "idade": "Livre",
     "beneficio": "Estimula organização e gestão de recursos.",
-    "risco": "Pode levar a sessões prolongadas de jogo."
+    "risco": "Pode levar a sessões prolongadas de jogo.",
+    "platform": "PC, consoles e dispositivos móveis",
+    "thumbnail": null,
+    "game_url": "https://www.stardewvalley.net/"
   },
   {
     "id": 4,
     "nome": "Rocket League",
+    "title": "Rocket League",
     "categoria": "Coordenação",
+    "genre": "Coordenação",
     "idade": "Livre",
     "beneficio": "Melhora coordenação motora e tomada rápida de decisões.",
-    "risco": "Competitividade excessiva pode gerar estresse."
+    "risco": "Competitividade excessiva pode gerar estresse.",
+    "platform": "PC e consoles",
+    "thumbnail": null,
+    "game_url": "https://www.rocketleague.com/"
+  },
+  {
+    "id": 5,
+    "nome": "Civilization VI",
+    "title": "Civilization VI",
+    "categoria": "Estratégia",
+    "genre": "Estratégia",
+    "idade": "10+",
+    "beneficio": "Exercita visão de longo prazo, análise de consequências e tomada de decisão.",
+    "risco": "Partidas longas exigem pausas e boa organização do tempo.",
+    "platform": "PC, consoles e dispositivos móveis",
+    "thumbnail": null,
+    "game_url": "https://store.steampowered.com/app/289070/Sid_Meiers_Civilization_VI/"
+  },
+  {
+    "id": 6,
+    "nome": "Kerbal Space Program",
+    "title": "Kerbal Space Program",
+    "categoria": "Aprendizado",
+    "genre": "Aprendizado",
+    "idade": "Livre",
+    "beneficio": "Apresenta conceitos de física e engenharia por meio de experimentação prática.",
+    "risco": "A curva de aprendizagem pode exigir apoio para jogadores iniciantes.",
+    "platform": "PC e consoles",
+    "thumbnail": null,
+    "game_url": "https://www.kerbalspaceprogram.com/"
   }
 ]

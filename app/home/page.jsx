@@ -1,7 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import FeatureCard from "@/components/FeatureCard";
 import CategoryCard from "@/components/CategoryCard";
-import Footer from "@/components/Footer";
 import { Target, Brain, Users, ShieldCheck } from "lucide-react";
 
 const features = [
@@ -34,12 +33,13 @@ const categories = [
   { title: "Coordenação" },
   { title: "Estratégia" },
   { title: "Aprendizado" },
+  { title: "Segurança Digital" },
 ];
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#020817] text-white">
-      <section className="mx-auto max-w-7xl px-8 pt-4 pb-12">
+      <section className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 lg:px-8">
         <div className="rounded-[2rem] border border-slate-800 bg-[#020817] p-0">
           <HeroSection />
 
@@ -60,7 +60,7 @@ export default function Home() {
             Categorias
           </p>
 
-          <h2 className="mb-10 text-center text-4xl font-extrabold">
+          <h2 className="mb-10 text-center text-3xl font-extrabold sm:text-4xl">
             O que você quer desenvolver?
           </h2>
 
@@ -70,8 +70,6 @@ export default function Home() {
             ))}
           </div>
         </section>
-
-        <Footer />
       </section>
     </main>
   );
