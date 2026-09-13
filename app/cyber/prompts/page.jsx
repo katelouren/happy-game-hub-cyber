@@ -21,7 +21,7 @@ import { recordPromptAnalysis } from "@/lib/activityStore";
 import { requestPromptAnalysis } from "@/services/promptAnalysisService";
 
 const EXAMPLE_PROMPT =
-  "Explique cinco boas práticas para criação de senhas fortes, considerando usuários iniciantes. Apresente a resposta em uma lista objetiva, com exemplos fictícios, e não solicite nem utilize dados pessoais.";
+  "Quero encontrar um jogo para um adolescente que gosta de construção e estratégia, que estimule criatividade e raciocínio lógico, seja adequado para sua faixa etária e possa ser jogado em sessões curtas. Recomende três opções e explique brevemente por que cada jogo foi escolhido. Não solicite nem utilize dados pessoais desnecessários.";
 
 function scoreColor(score) {
   if (score >= 70) return "bg-lime-400";
@@ -45,7 +45,7 @@ export default function Prompts() {
     if (!prompt.trim()) {
       setAnalysis(null);
       setStatus("error");
-      setError("Digite ou cole um prompt antes de solicitar a análise.");
+      setError("Descreva o jogo que você procura antes de solicitar a análise.");
       return;
     }
 
@@ -69,7 +69,7 @@ export default function Prompts() {
       setError(
         analysisError instanceof Error
           ? analysisError.message
-          : "Não foi possível analisar o prompt. Tente novamente.",
+          : "Não foi possível analisar sua solicitação. Tente novamente.",
       );
     }
   }
@@ -109,16 +109,15 @@ export default function Prompts() {
         <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-10">
           <p className="mb-4 inline-flex items-center gap-2 rounded-md border border-lime-400 px-4 py-2 text-xs font-bold uppercase tracking-widest text-lime-400">
             <ShieldCheck aria-hidden="true" size={16} />
-            Segurança em IA
+            IA para descoberta segura
           </p>
 
           <h1 className="mb-4 text-3xl font-extrabold sm:text-4xl md:text-5xl">
-            Avaliador de Prompts
+            Direcionamento para IA
           </h1>
 
           <p className="max-w-3xl text-base leading-relaxed text-slate-300 md:text-lg">
-            Analise clareza, contexto, objetivo, formato e segurança. A avaliação
-            acontece localmente e o texto digitado não é armazenado.
+            Descreva o jogo que você procura e veja se sua solicitação possui contexto suficiente para uma recomendação mais precisa. A análise acontece localmente e o texto digitado não é armazenado.
           </p>
         </div>
 
@@ -138,19 +137,19 @@ export default function Prompts() {
                 aria-hidden="true"
                 className="shrink-0 text-lime-400"
               />
-              Digite seu prompt
+              Descreva o jogo que você procura
             </h2>
 
             <label htmlFor="prompt-input" className="block">
               <span className="mb-2 block font-semibold text-slate-200">
-                Prompt para análise
+                Conte ao assistente o que você procura
               </span>
 
               <textarea
                 id="prompt-input"
                 value={prompt}
                 onChange={handlePromptChange}
-                placeholder="Exemplo: explique boas práticas de segurança em uma lista com cinco itens para usuários iniciantes."
+                placeholder="Exemplo: quero encontrar um jogo para um adolescente que gosta de construção e estratégia, que estimule criatividade e raciocínio lógico e seja adequado para sua faixa etária."
                 rows={11}
                 aria-describedby="prompt-counter prompt-error"
                 aria-invalid={Boolean(error)}
@@ -172,7 +171,7 @@ export default function Prompts() {
                 }}
                 className="rounded-md px-2 py-1 font-semibold text-lime-400 transition hover:bg-lime-400/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
               >
-                Usar exemplo seguro
+                Usar exemplo completo
               </button>
             </div>
 
@@ -198,7 +197,7 @@ export default function Prompts() {
                 ) : (
                   <WandSparkles aria-hidden="true" size={20} />
                 )}
-                {status === "loading" ? "Analisando..." : "Analisar prompt"}
+                {status === "loading" ? "Analisando..." : "Analisar solicitação"}
               </button>
 
               <button
@@ -218,7 +217,7 @@ export default function Prompts() {
             aria-busy={status === "loading"}
             className="rounded-3xl border border-slate-800 bg-[#061225] p-5 sm:p-8"
           >
-            <h2 className="mb-6 text-2xl font-bold">Resultado da análise</h2>
+            <h2 className="mb-6 text-2xl font-bold">Qualidade da solicitação</h2>
 
             {status === "loading" ? (
               <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-slate-800 bg-[#020817] p-8 text-center">
@@ -227,16 +226,16 @@ export default function Prompts() {
                   className="mb-4 animate-spin text-lime-400"
                   size={42}
                 />
-                <p className="font-bold">Verificando os critérios...</p>
+                <p className="font-bold">Verificando contexto e critérios...</p>
                 <p className="mt-2 text-sm text-slate-400">
-                  A análise é local e não envia seu texto a um servidor.
+                  A análise é local e não envia sua solicitação a um servidor.
                 </p>
               </div>
             ) : analysis ? (
               <>
                 <div className="mb-6 grid gap-4 sm:grid-cols-2">
                   <div className="rounded-2xl border border-slate-800 bg-[#020817] p-5">
-                    <p className="text-sm font-semibold text-slate-400">Nota geral</p>
+                    <p className="text-sm font-semibold text-slate-400">Qualidade geral</p>
                     <p className="mt-2 text-3xl font-extrabold text-lime-400">
                       {analysis.score}
                       <span className="text-base text-slate-400">/100</span>
@@ -245,7 +244,7 @@ export default function Prompts() {
                   </div>
 
                   <div className="rounded-2xl border border-slate-800 bg-[#020817] p-5">
-                    <p className="text-sm font-semibold text-slate-400">Risco</p>
+                    <p className="text-sm font-semibold text-slate-400">Risco de privacidade</p>
                     <p
                       className={`mt-2 text-2xl font-extrabold ${
                         analysis.risk.level === "Alto"
@@ -257,7 +256,7 @@ export default function Prompts() {
                     >
                       {analysis.risk.level}
                     </p>
-                    <p className="mt-1 text-sm text-slate-400">Segurança e privacidade</p>
+                    <p className="mt-1 text-sm text-slate-400">Privacidade e exposição de dados</p>
                   </div>
                 </div>
 
@@ -293,9 +292,9 @@ export default function Prompts() {
             ) : (
               <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-[#020817] p-8 text-center">
                 <Sparkles aria-hidden="true" className="mb-4 text-lime-400" size={42} />
-                <h3 className="text-xl font-bold">Nenhuma análise realizada</h3>
+                <h3 className="text-xl font-bold">Sua solicitação será analisada aqui</h3>
                 <p className="mt-2 max-w-sm text-slate-400">
-                  Escreva um prompt e selecione “Analisar prompt” para receber notas e sugestões.
+                  Descreva o jogo que você procura e selecione “Analisar solicitação”. O sistema verificará se há contexto suficiente para uma recomendação mais precisa.
                 </p>
               </div>
             )}
@@ -305,7 +304,7 @@ export default function Prompts() {
         {analysis && status === "success" && (
           <section aria-labelledby="details-title" className="mt-8 space-y-8">
             <h2 id="details-title" className="sr-only">
-              Detalhes da avaliação
+              Detalhes da análise
             </h2>
 
             <div className="grid gap-6 lg:grid-cols-2">
@@ -375,10 +374,10 @@ export default function Prompts() {
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <p className="text-sm font-bold uppercase tracking-widest text-lime-400">
-                    Versão aprimorada
+                    Solicitação aprimorada
                   </p>
                   <h3 className="mt-2 text-2xl font-extrabold">
-                    Um ponto de partida mais completo
+                    Um pedido mais completo para o assistente
                   </h3>
                 </div>
                 <button
@@ -391,7 +390,7 @@ export default function Prompts() {
                   ) : (
                     <Clipboard aria-hidden="true" size={19} />
                   )}
-                  {copyStatus === "success" ? "Copiado" : "Copiar prompt"}
+                  {copyStatus === "success" ? "Copiado" : "Copiar solicitação"}
                 </button>
               </div>
 
@@ -406,7 +405,7 @@ export default function Prompts() {
                 }`}
               >
                 {copyStatus === "success"
-                  ? "Prompt aprimorado copiado para a área de transferência."
+                  ? "Solicitação aprimorada copiada para a área de transferência."
                   : copyStatus === "error"
                     ? "O navegador bloqueou a cópia. Selecione o texto acima e copie manualmente."
                     : ""}
@@ -420,8 +419,8 @@ export default function Prompts() {
               >
                 <Bot aria-hidden="true" className="shrink-0 text-lime-400" />
                 <span>
-                  <strong className="block">Conversar com o assistente</strong>
-                  <span className="text-sm text-slate-400">Peça ajuda para interpretar sua nota.</span>
+                  <strong className="block">Continuar com o assistente</strong>
+                  <span className="text-sm text-slate-400">Use a solicitação aprimorada para continuar sua descoberta de jogos.</span>
                 </span>
               </Link>
               <Link
@@ -430,8 +429,8 @@ export default function Prompts() {
               >
                 <ShieldAlert aria-hidden="true" className="shrink-0 text-lime-400" />
                 <span>
-                  <strong className="block">Ver recomendações</strong>
-                  <span className="text-sm text-slate-400">Use o resultado para definir o próximo estudo.</span>
+                  <strong className="block">Ver recomendações de jogos</strong>
+                  <span className="text-sm text-slate-400">Explore sugestões alinhadas ao perfil e aos objetivos do jogador.</span>
                 </span>
               </Link>
             </div>
@@ -441,12 +440,20 @@ export default function Prompts() {
         <section className="mt-8 rounded-3xl border border-slate-800 bg-[#061225] p-5 sm:p-8">
           <h2 className="mb-3 text-2xl font-bold">Como a análise funciona?</h2>
           <p className="max-w-4xl leading-relaxed text-slate-300">
-            Regras locais independentes avaliam seis critérios, procuram instruções
-            vagas ou conflitantes e detectam sinais de exposição indevida. O texto
-            não sai do navegador; somente nota, risco e áreas de melhoria são salvos
-            localmente para personalizar recomendações. Esta é uma ferramenta
-            educativa baseada em heurísticas: ela não é um detector infalível e não
-            substitui revisão humana em situações reais.
+            Regras locais independentes avaliam seis critérios da solicitação, identificam
+            instruções vagas ou conflitantes e detectam possíveis sinais de exposição
+            indevida de dados. O texto não sai do navegador; somente nota, risco e
+            áreas de melhoria são salvos localmente para apoiar recomendações futuras.
+            Esta é uma ferramenta educativa baseada em heurísticas: ela ajuda o usuário
+            a fornecer contexto mais útil ao Assistente Inteligente, mas não substitui
+            revisão humana em situações reais.
+          </p>
+          <p className="mt-4 max-w-4xl leading-relaxed text-slate-400">
+            Para receber recomendações de jogos, não é necessário informar senhas,
+            dados bancários, documentos, códigos de autenticação ou outras informações
+            pessoais sensíveis. Em caso de cobranças, links ou mensagens recebidas em
+            nome do Happy Game Hub, confirme sempre a informação pelos canais oficiais
+            da plataforma antes de realizar qualquer ação.
           </p>
         </section>
       </section>
