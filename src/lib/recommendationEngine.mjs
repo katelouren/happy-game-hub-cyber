@@ -58,7 +58,7 @@ const GAME_BY_STYLE = {
 const STARTER_RECOMMENDATIONS = [
   {
     id: "starter-profile",
-    title: "Defina seu perfil de jogador",
+    title: "Defina seu perfil de desenvolvimento",
     type: "Primeiro passo",
     priority: 100,
     skill: "Autoconhecimento",

@@ -12,7 +12,7 @@ import {
 
 export default function ApiGameCard({
   title,
-  genre,
+  skill,
   platform,
   thumbnail,
   gameUrl = "",
@@ -61,8 +61,8 @@ export default function ApiGameCard({
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full border border-lime-400/40 px-3 py-1 text-xs font-bold uppercase tracking-wider text-lime-400">
-            {genre}
+          <span aria-label={`Habilidade associada: ${skill}`} className="rounded-full border border-lime-400/40 px-3 py-1 text-xs font-bold uppercase tracking-wider text-lime-400">
+            {skill}
           </span>
           {age && (
             <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">

@@ -24,7 +24,7 @@ const ferramentas = [
   },
   {
     icon: Bot,
-    titulo: "Assistente de Segurança",
+    titulo: "Assistente de Cibersegurança e Aprendizagem",
     descricao:
       "Converse sobre a plataforma, jogos, prompts, IA e boas práticas de segurança digital.",
     href: "/cyber/assistente",
@@ -43,14 +43,14 @@ export default function Cyber() {
           </p>
 
           <h1 className="mb-5 max-w-4xl text-4xl font-extrabold leading-tight md:text-5xl">
-            Segurança digital também faz parte do jogo.
+            Segurança digital faz parte do seu desenvolvimento.
           </h1>
 
           <p className="max-w-3xl text-base leading-relaxed text-slate-300 md:text-lg">
-            Explore ferramentas educativas sobre senhas, uso responsável de
-            Inteligência Artificial e tomada de decisão diante de situações de
-            risco digital, inspiradas nos temas trabalhados na mentoria da Palo
-            Alto Networks.
+            Pratique a conscientização em cibersegurança no ambiente corporativo:
+            senhas, uso responsável de IA e reconhecimento de phishing e
+            engenharia social. As atividades ajudam a refletir sobre riscos e
+            comportamentos digitais mais seguros.
           </p>
         </div>
 

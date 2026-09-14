@@ -522,4 +522,4 @@ export function getQuickPrompts(pathname = "/") {
 }
 
 export const ASSISTANT_WELCOME =
-  "Olá! Sou o Assistente de Segurança do Happy Game Hub. Descreva uma situação sem informar dados pessoais; também posso ajudar com a plataforma, jogos, prompts e IA.";
+  "Olá! Sou o Assistente de Cibersegurança e Aprendizagem do Happy Game Hub. Descreva uma situação sem informar dados pessoais; também posso ajudar com a plataforma, jogos, prompts e IA.";

@@ -6,23 +6,23 @@ import { Target, Brain, Users, ShieldCheck } from "lucide-react";
 const features = [
   {
     icon: Target,
-    title: "Descoberta Inteligente",
-    description: "Encontre jogos que combinam com seus interesses e objetivos.",
+    title: "Treinamento cognitivo",
+    description: "Jogos e desafios para estimular atenção, memória, raciocínio e tomada de decisão.",
   },
   {
     icon: Brain,
-    title: "Desenvolvimento",
-    description: "Jogos que estimulam habilidades cognitivas e emocionais.",
+    title: "Trilhas personalizadas",
+    description: "Recomendações baseadas no perfil, interesses e atividades realizadas.",
   },
   {
     icon: Users,
-    title: "Para Todos",
-    description: "Recomendações para qualquer idade e estilo de jogador.",
+    title: "Evolução contínua",
+    description: "Atividades e recomendações que se atualizam conforme você pratica na plataforma.",
   },
   {
     icon: ShieldCheck,
-    title: "Jogos Conscientes",
-    description: "Diversão equilibrada com saúde mental e segurança.",
+    title: "Cibersegurança",
+    description: "Práticas educativas para reconhecer riscos digitais e desenvolver comportamentos mais seguros.",
   },
 ];
 

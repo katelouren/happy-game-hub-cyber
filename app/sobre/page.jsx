@@ -15,8 +15,10 @@ export default function Sobre() {
           </h1>
 
           <p className="max-w-4xl text-lg leading-relaxed text-slate-300">
-            O Happy Game Hub é uma plataforma desenvolvida para ajudar pais e jogadores a encontrarem jogos alinhados aos seus
-            objetivos de desenvolvimento cognitivo, emocional e criativo.
+            O Happy Game Hub é um MVP de desenvolvimento corporativo que utiliza
+            jogos, inteligência artificial e experiências gamificadas para
+            estimular habilidades cognitivas e fortalecer a conscientização
+            em cibersegurança.
           </p>
         </div>
 
@@ -30,9 +32,9 @@ export default function Sobre() {
             </h2>
 
             <p className="text-slate-300 leading-relaxed">
-              A plataforma valoriza jogos capazes de estimular habilidades como
-              raciocínio lógico, criatividade, resolução de problemas,
-              planejamento e aprendizagem contínua.
+              Jogos e atividades oferecem oportunidades de prática de atenção,
+              memória, raciocínio lógico, criatividade, resolução de problemas
+              e tomada de decisão.
             </p>
           </div>
 
@@ -40,13 +42,13 @@ export default function Sobre() {
             <ShieldCheck size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
-              Jogos Conscientes
+              Segurança Digital
             </h2>
 
             <p className="text-slate-300 leading-relaxed">
-              Nosso objetivo é incentivar uma relação saudável com os games,
-              destacando experiências equilibradas e adequadas para diferentes
-              faixas etárias.
+              A área Cyber reúne práticas sobre senhas, prompts, phishing e
+              engenharia social, com apoio de um assistente educacional com IA
+              para orientar comportamentos digitais mais seguros.
             </p>
           </div>
 
@@ -54,7 +56,7 @@ export default function Sobre() {
             <Sparkles size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
-              Recomendação Inteligente
+              Trilhas Personalizadas
             </h2>
 
             <p className="text-slate-300 leading-relaxed">
@@ -68,12 +70,13 @@ export default function Sobre() {
             <Gamepad2 size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
-              Diversão com Propósito
+              Aprendizagem Contínua
             </h2>
 
             <p className="text-slate-300 leading-relaxed">
-              Acreditamos que os jogos podem ser ferramentas poderosas para
-              entretenimento, aprendizagem e desenvolvimento pessoal.
+              Em ambientes corporativos, a plataforma pode apoiar programas
+              contínuos de treinamento e conscientização de equipes, combinando
+              prática cognitiva e segurança digital.
             </p>
           </div>
 
@@ -89,7 +92,8 @@ export default function Sobre() {
             Este projeto foi desenvolvido como parte da graduação em Sistemas
             de Informação, explorando conceitos de experiência do usuário,
             desenvolvimento web, componentes reutilizáveis, design responsivo
-            e aplicações futuras de Inteligência Artificial.
+            e aplicações de Inteligência Artificial na aprendizagem e na
+            conscientização em cibersegurança.
           </p>
 
         </section>

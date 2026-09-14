@@ -43,29 +43,37 @@ export default function Navbar() {
         aria-label="Navegação principal"
         className="rounded-2xl border border-slate-800 bg-[#020817]/95 px-4 py-3 sm:px-6 sm:py-4"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <Link
             href="/home"
             onClick={() => setMenuAberto(false)}
-            className="flex min-w-0 items-center rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-400"
+            className="flex shrink-0 items-center gap-2 rounded sm:gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-400"
           >
-            <Image
-              src="/images/logo.png"
-              alt="Happy Game Hub"
-              width={250}
-              height={90}
-              priority
-              className="h-auto w-40 sm:w-52"
-            />
+            <span
+              aria-hidden="true"
+              className="relative h-11 w-14 shrink-0 overflow-hidden sm:h-12 sm:w-16"
+            >
+              <Image
+                src="/images/logo.png"
+                alt=""
+                width={1536}
+                height={1024}
+                priority
+                className="absolute -left-[55px] -top-[61px] h-auto w-64 max-w-none sm:-left-[62px] sm:-top-[68px] sm:w-72"
+              />
+            </span>
+            <span className="whitespace-nowrap font-mono text-sm font-bold tracking-wide text-lime-400 sm:text-lg lg:text-xl">
+              HAPPY GAME HUB
+            </span>
           </Link>
 
-          <div className="hidden items-center gap-6 xl:flex">
+          <div className="hidden items-center gap-6 font-mono xl:flex">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 aria-current={isCurrentRoute(link.href) ? "page" : undefined}
-                className={`rounded-sm border-b-2 pb-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-400 2xl:text-base ${
+                className={`whitespace-nowrap rounded-sm border-b-2 py-3 text-base font-semibold tracking-wide transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime-400 ${
                   isCurrentRoute(link.href)
                     ? "border-lime-400 text-lime-400"
                     : "border-transparent text-white hover:border-lime-400 hover:text-lime-400"
@@ -78,7 +86,7 @@ export default function Navbar() {
             <Link
               href="/login"
               aria-current={pathname === "/login" ? "page" : undefined}
-              className="flex items-center gap-2 rounded-xl border border-lime-400 px-5 py-3 text-sm font-bold text-lime-400 transition hover:bg-lime-400 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400 2xl:text-base"
+              className="flex items-center gap-2 rounded-xl border border-lime-400 px-5 py-3 text-base font-semibold tracking-wide text-lime-400 transition-colors hover:bg-lime-400 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
             >
               <User aria-hidden="true" size={18} />
               Login
@@ -105,7 +113,7 @@ export default function Navbar() {
         {menuAberto && (
           <div
             id="menu-mobile"
-            className="mt-5 flex flex-col gap-2 border-t border-slate-800 pt-5 xl:hidden"
+            className="mt-5 flex flex-col gap-2 border-t border-slate-800 pt-5 font-mono xl:hidden"
           >
             {links.map((link) => (
               <Link
@@ -113,7 +121,7 @@ export default function Navbar() {
                 href={link.href}
                 onClick={() => setMenuAberto(false)}
                 aria-current={isCurrentRoute(link.href) ? "page" : undefined}
-                className={`rounded-lg px-3 py-3 text-base font-semibold transition focus-visible:outline-2 focus-visible:outline-lime-400 ${
+                className={`rounded-lg px-3 py-3 text-base font-semibold tracking-wide transition-colors focus-visible:outline-2 focus-visible:outline-lime-400 ${
                   isCurrentRoute(link.href)
                     ? "bg-lime-400/10 text-lime-400"
                     : "text-white hover:bg-slate-800 hover:text-lime-400"
@@ -127,7 +135,7 @@ export default function Navbar() {
               href="/login"
               onClick={() => setMenuAberto(false)}
               aria-current={pathname === "/login" ? "page" : undefined}
-              className="mt-2 flex items-center justify-center gap-2 rounded-xl border border-lime-400 px-6 py-3 font-bold text-lime-400 transition hover:bg-lime-400 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
+              className="mt-2 flex items-center justify-center gap-2 rounded-xl border border-lime-400 px-6 py-3 text-base font-semibold tracking-wide text-lime-400 transition-colors hover:bg-lime-400 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
             >
               <User aria-hidden="true" size={18} />
               Login

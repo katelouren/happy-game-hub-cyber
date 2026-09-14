@@ -10,7 +10,7 @@ export const metadata = {
     template: "%s | Happy Game Hub",
   },
   description:
-    "Jogos e experiências educativas para desenvolver habilidades cognitivas e segurança digital.",
+    "Treinamento cognitivo corporativo com jogos, trilhas personalizadas e IA para fortalecer a conscientização em cibersegurança.",
 };
 
 export const viewport = {

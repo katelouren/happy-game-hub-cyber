@@ -29,7 +29,7 @@ function priorityLabel(priority) {
 
 export default function Recomendacoes() {
   const { activity, isHydrated, clearActivity } = useActivity();
-  const [idade, setIdade] = useState("Adolescente");
+  const [idade, setIdade] = useState("Adulto");
   const [objetivo, setObjetivo] = useState("Criatividade");
   const [estilo, setEstilo] = useState("Construção");
   const [formStatus, setFormStatus] = useState("idle");
@@ -55,7 +55,7 @@ export default function Recomendacoes() {
       );
 
       if (savedProfile) {
-        setIdade(savedProfile.idade);
+        setIdade("Adulto");
         setObjetivo(hasQueryObjective ? queryObjective : savedProfile.objetivo);
         setEstilo(savedProfile.estilo);
       } else if (hasQueryObjective) {
@@ -78,7 +78,10 @@ export default function Recomendacoes() {
   }, [activity.profile, isHydrated]);
 
   const result = useMemo(
-    () => generateRecommendations(activity),
+    () => generateRecommendations({
+      ...activity,
+      profile: activity.profile ? { ...activity.profile, idade: "Adulto" } : null,
+    }),
     [activity],
   );
 
@@ -131,17 +134,17 @@ export default function Recomendacoes() {
         <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-10">
           <p className="mb-4 inline-flex items-center gap-2 rounded-md border border-lime-400 px-4 py-2 text-xs font-bold uppercase tracking-widest text-lime-400">
             <Sparkles aria-hidden="true" size={16} />
-            Recomendação personalizada
+            Desenvolvimento personalizado
           </p>
 
           <h1 className="mb-4 text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">
-            Descubra experiências alinhadas ao seu progresso.
+            Minha trilha de desenvolvimento
           </h1>
 
           <p className="max-w-3xl text-base leading-relaxed text-slate-300 md:text-lg">
-            Seu perfil, avaliações de prompts e jogos marcados como interessantes
-            formam uma trilha local, ordenada por relevância e atualizada a cada
-            interação.
+            Seu perfil, interesses e atividades realizadas ajudam a organizar uma
+            trilha personalizada de desenvolvimento cognitivo e segurança digital,
+            combinando jogos, prática de IA e cibersegurança.
           </p>
         </div>
 
@@ -153,7 +156,7 @@ export default function Recomendacoes() {
           >
             <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold">
               <UserRound aria-hidden="true" className="text-lime-400" />
-              Perfil do jogador
+              Meu perfil de desenvolvimento
             </h2>
 
             <label htmlFor="idade" className="mb-5 block">
@@ -167,7 +170,7 @@ export default function Recomendacoes() {
                 onChange={handleFieldChange(setIdade)}
                 className="w-full rounded-xl border border-slate-700 bg-[#020817] p-4 text-slate-200 outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20"
               >
-                {recommendationOptions.ages.map((age) => (
+                {recommendationOptions.ages.filter((age) => age === "Adulto").map((age) => (
                   <option key={age}>{age}</option>
                 ))}
               </select>
@@ -217,7 +220,7 @@ export default function Recomendacoes() {
               ) : (
                 <Target aria-hidden="true" size={20} />
               )}
-              {formStatus === "loading" ? "Atualizando..." : "Salvar perfil e recomendar"}
+              {formStatus === "loading" ? "Atualizando..." : "Salvar perfil e atualizar trilha"}
             </button>
 
             <p

@@ -19,6 +19,7 @@ import {
   getSafeUserMessage,
 } from "@/lib/assistantEngine.mjs";
 import { recordAssistantInteraction } from "@/lib/activityStore";
+import { requestAssistantResponse } from "@/services/assistantService.mjs";
 
 const STORAGE_KEY = "happy-game-hub:assistant:v1";
 const ALLOWED_TOPICS = new Set([
@@ -247,7 +248,7 @@ export default function AssistantChat({
   compact = false,
   focusOnMount = false,
   pathname = "/cyber/assistente",
-  responseProvider = createAssistantResponse,
+  responseProvider = requestAssistantResponse,
 }) {
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
   const [context, setContext] = useState({ lastTopic: null });
@@ -324,6 +325,12 @@ export default function AssistantChat({
     }
 
     if (status === "loading") return;
+
+    if (input.length > 600) {
+      setStatus("error");
+      setErrorMessage("Envie uma pergunta com até 600 caracteres.");
+      return;
+    }
 
     const safeInput = getSafeUserMessage(input);
     const userMessage = {
@@ -408,7 +415,7 @@ export default function AssistantChat({
   return (
     <section
       className={`flex min-h-0 flex-col overflow-hidden rounded-3xl border border-slate-800 bg-[#061225] ${className}`}
-      aria-label="Conversa com o Assistente de Segurança"
+      aria-label="Conversa com o Assistente de Cibersegurança e Aprendizagem"
     >
       <div className="flex items-center justify-between gap-4 border-b border-slate-800 px-5 py-4 sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
@@ -417,11 +424,11 @@ export default function AssistantChat({
           </span>
           <div className="min-w-0">
             <h2 className="truncate font-bold text-white">
-              Assistente de Segurança
+              Assistente de Cibersegurança e Aprendizagem
             </h2>
             <p className="flex items-center gap-1 text-xs text-slate-400">
               <ShieldCheck size={13} className="text-lime-400" aria-hidden="true" />
-              Triagem educativa com regras locais
+              Aprendizagem e segurança digital
             </p>
           </div>
         </div>

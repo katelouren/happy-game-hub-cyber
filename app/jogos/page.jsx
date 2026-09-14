@@ -13,6 +13,7 @@ import {
 import ApiGameCard from "@/components/ApiGameCard";
 import { useActivity } from "@/hooks/useActivity";
 import { toggleGameInterest } from "@/lib/activityStore";
+import { getGameSkill, filterGamesBySkill } from "@/lib/gameSkills.mjs";
 import localGames from "../../data/games.json";
 
 const API_URL = "/api/games";
@@ -44,6 +45,7 @@ function normalizeGame(game, index, source) {
     id: `${source}:${game.id ?? index}`,
     title,
     genre,
+    skill: getGameSkill({ title, genre }),
     platform: normalizeText(game.platform, "Plataforma não informada"),
     thumbnail: safeHttpUrl(game.thumbnail),
     gameUrl: safeHttpUrl(game.game_url),
@@ -112,7 +114,7 @@ export default function Jogos() {
   const [source, setSource] = useState("");
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("Todos");
+  const [selectedSkill, setSelectedSkill] = useState("Todos");
   const [feedback, setFeedback] = useState("");
 
   const loadGames = useCallback(async () => {
@@ -161,30 +163,20 @@ export default function Jogos() {
     };
   }, [loadGames]);
 
-  const genres = useMemo(
+  const skills = useMemo(
     () => [
       "Todos",
-      ...Array.from(new Set(games.map((game) => game.genre))).sort((a, b) =>
+      ...Array.from(new Set(games.map((game) => game.skill))).sort((a, b) =>
         a.localeCompare(b, "pt-BR"),
       ),
     ],
     [games],
   );
 
-  const visibleGames = useMemo(() => {
-    const normalizedSearch = searchTerm.trim().toLocaleLowerCase("pt-BR");
-
-    return games.filter((game) => {
-      const matchesGenre =
-        selectedGenre === "Todos" || game.genre === selectedGenre;
-      const searchableText = `${game.title} ${game.genre} ${game.platform}`
-        .toLocaleLowerCase("pt-BR");
-      const matchesSearch =
-        normalizedSearch.length === 0 || searchableText.includes(normalizedSearch);
-
-      return matchesGenre && matchesSearch;
-    });
-  }, [games, searchTerm, selectedGenre]);
+  const visibleGames = useMemo(
+    () => filterGamesBySkill(games, searchTerm, selectedSkill),
+    [games, searchTerm, selectedSkill],
+  );
 
   const interestedIds = useMemo(
     () => new Set(activity.gameInterests.map((game) => String(game.id))),
@@ -202,7 +194,7 @@ export default function Jogos() {
 
   function clearFilters() {
     setSearchTerm("");
-    setSelectedGenre("Todos");
+    setSelectedSkill("Todos");
   }
 
   return (
@@ -219,15 +211,15 @@ export default function Jogos() {
                 Biblioteca de Jogos
               </p>
               <h1 className="mt-2 text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">
-                Descubra sua próxima experiência
+                Treine diferentes habilidades através dos jogos
               </h1>
             </div>
           </div>
 
           <p className="mt-6 max-w-4xl text-base leading-relaxed text-slate-300 sm:text-lg">
-            Explore jogos da FreeToGame, encontre experiências alinhadas às suas
-            preferências e marque as opções que deseja considerar nas suas
-            recomendações.
+            Explore jogos e descubra quais habilidades cognitivas cada experiência
+            pode estimular, como atenção, raciocínio, estratégia e tomada de decisão.
+            Marque seus interesses para personalizar sua trilha.
           </p>
         </div>
 
@@ -283,9 +275,9 @@ export default function Jogos() {
                 </p>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-[1fr_16rem]">
+              <div className="grid gap-4 md:grid-cols-[1fr_22rem]">
                 <label>
-                  <span className="sr-only">Buscar por título, gênero ou plataforma</span>
+                  <span className="sr-only">Buscar por título, plataforma, gênero ou habilidade</span>
                   <span className="relative block">
                     <Search
                       aria-hidden="true"
@@ -296,22 +288,22 @@ export default function Jogos() {
                       type="search"
                       value={searchTerm}
                       onChange={(event) => setSearchTerm(event.target.value)}
-                      placeholder="Buscar jogo, gênero ou plataforma"
+                      placeholder="Buscar jogo, plataforma, gênero ou habilidade"
                       className="w-full rounded-xl border border-slate-700 bg-[#020817] py-3 pl-11 pr-4 text-slate-100 outline-none placeholder:text-slate-500 focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20"
                     />
                   </span>
                 </label>
 
                 <label>
-                  <span className="sr-only">Filtrar por gênero</span>
+                  <span className="sr-only">Filtrar por habilidade cognitiva</span>
                   <select
-                    value={selectedGenre}
-                    onChange={(event) => setSelectedGenre(event.target.value)}
+                    value={selectedSkill}
+                    onChange={(event) => setSelectedSkill(event.target.value)}
                     className="w-full rounded-xl border border-slate-700 bg-[#020817] px-4 py-3 text-slate-100 outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20"
                   >
-                    {genres.map((genre) => (
-                      <option key={genre} value={genre}>
-                        {genre === "Todos" ? "Todos os gêneros" : genre}
+                    {skills.map((skill) => (
+                      <option key={skill} value={skill}>
+                        {skill === "Todos" ? "Todas as habilidades" : skill}
                       </option>
                     ))}
                   </select>
@@ -349,7 +341,7 @@ export default function Jogos() {
               <ApiGameCard
                 key={game.id}
                 title={game.title}
-                genre={game.genre}
+                skill={game.skill}
                 platform={game.platform}
                 thumbnail={game.thumbnail}
                 gameUrl={game.gameUrl}
@@ -368,7 +360,7 @@ export default function Jogos() {
             <Search aria-hidden="true" className="mx-auto text-slate-500" size={42} />
             <h2 className="mt-4 text-2xl font-extrabold">Nenhum jogo encontrado</h2>
             <p className="mx-auto mt-3 max-w-lg text-slate-400">
-              Tente outro termo ou remova o filtro de gênero para voltar a explorar
+              Tente outro termo ou remova o filtro de habilidade para voltar a explorar
               o catálogo.
             </p>
             <button

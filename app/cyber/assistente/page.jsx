@@ -9,9 +9,9 @@ import {
 import AssistantChat from "@/components/AssistantChat";
 
 export const metadata = {
-  title: "Assistente de Segurança",
+  title: "Assistente de Cibersegurança e Aprendizagem",
   description:
-    "Assistente educativo para classificar situações de segurança digital e orientar ações seguras.",
+    "Assistente educativo com IA para apoiar a aprendizagem e orientar comportamentos digitais mais seguros.",
 };
 
 export default function AssistentePage() {
@@ -28,20 +28,20 @@ export default function AssistentePage() {
             <div>
               <h1 className="flex items-center gap-3 text-4xl font-extrabold md:text-5xl">
                 <Bot className="shrink-0 text-lime-400" aria-hidden="true" />
-                Assistente de Segurança
+                Assistente de Cibersegurança e Aprendizagem
               </h1>
 
               <p className="mt-4 max-w-3xl text-base leading-relaxed text-slate-300 md:text-lg">
-                Descreva uma situação digital e receba uma triagem educativa com
-                classificação, nível de risco, alerta e ação recomendada. Você
-                também pode tirar dúvidas sobre o Happy Game Hub, jogos, prompts e
-                inteligência artificial.
+                Conte com orientação educativa para sua trilha de desenvolvimento:
+                segurança digital, phishing, senhas, autenticação e privacidade.
+                Tire também dúvidas sobre jogos, prompts, IA e navegação no
+                Happy Game Hub.
               </p>
             </div>
 
             <div className="flex items-center gap-2 rounded-xl border border-lime-400/20 bg-[#020817] px-4 py-3 text-sm text-slate-300">
               <Sparkles size={18} className="shrink-0 text-lime-400" aria-hidden="true" />
-              Análise local, sem envio para serviços externos
+              IA generativa com fallback local
             </div>
           </div>
         </div>
@@ -73,9 +73,10 @@ export default function AssistentePage() {
             <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6">
               <h2 className="text-lg font-bold">Limites da ferramenta</h2>
               <p className="mt-3 text-sm leading-relaxed text-slate-400">
-                A classificação usa heurísticas locais e não é um detector
-                infalível. Para um incidente real, procure o suporte do serviço
-                afetado ou um profissional qualificado.
+                As perguntas são enviadas à IA quando disponível; conteúdos sensíveis
+                detectados são tratados localmente. A classificação usa regras
+                locais, e as respostas podem conter erros. Em um incidente real,
+                procure a equipe responsável pela segurança ou o suporte do serviço.
               </p>
             </div>
 
@@ -96,7 +97,7 @@ export default function AssistentePage() {
                   href="/recomendacoes"
                   className="flex items-center justify-between gap-3 rounded-lg text-sm font-bold text-lime-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
                 >
-                  Ver recomendações
+                  Ver minha trilha
                   <ArrowRight aria-hidden="true" size={16} />
                 </Link>
               </div>

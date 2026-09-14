@@ -40,8 +40,8 @@ export default function Login() {
     setStatus("success");
     setMessage(
       mode === "login"
-        ? "Acesso de demonstração concluído. Nenhuma credencial foi enviada ou armazenada."
-        : "Cadastro de demonstração concluído. Os dados não foram enviados nem armazenados.",
+        ? "Validação local concluída. Nenhuma conta foi autenticada e nenhuma credencial foi enviada ou armazenada."
+        : "Validação local concluída. Nenhuma conta foi criada e os dados não foram enviados nem armazenados.",
     );
   }
 
@@ -57,7 +57,7 @@ export default function Login() {
       <section className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-2 lg:px-8">
         <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-10">
           <p className="mb-4 inline-block rounded-md border border-lime-400 px-4 py-2 text-xs font-bold uppercase tracking-widest text-lime-400">
-            Área do usuário
+            Área do colaborador
           </p>
 
           <h1 className="mb-6 text-3xl font-extrabold sm:text-4xl lg:text-5xl">
@@ -65,17 +65,17 @@ export default function Login() {
           </h1>
 
           <p className="text-base leading-relaxed text-slate-300 sm:text-lg">
-            Experimente o fluxo de acesso da plataforma. Nesta versão acadêmica,
-            a autenticação é simulada localmente e nenhuma credencial é transmitida.
+            Acesse sua experiência personalizada no Happy Game Hub e acompanhe
+            sua trilha de desenvolvimento.
           </p>
 
           <div className="mt-8 rounded-3xl border border-lime-400/20 bg-[#020817] p-6 sm:mt-10 sm:p-8">
             <Gamepad2 aria-hidden="true" size={48} className="mb-5 text-lime-400" />
             <h2 className="mb-3 text-2xl font-bold">Perfil personalizado</h2>
             <p className="leading-relaxed text-slate-400">
-              Preferências, avaliações e interesses já são mantidos somente neste
-              navegador. Um backend autenticado poderá substituir a demonstração
-              futuramente sem expor senhas no cliente.
+              Seu perfil e preferências ajudam a personalizar sua trilha de
+              desenvolvimento e segurança digital. Essas informações ficam
+              somente neste navegador.
             </p>
           </div>
         </div>
@@ -87,12 +87,12 @@ export default function Login() {
           <div className="mb-8 text-center">
             <UserRound aria-hidden="true" size={52} className="mx-auto mb-4 text-lime-400" />
             <h2 className="text-3xl font-extrabold">
-              {mode === "login" ? "Login demonstrativo" : "Cadastro demonstrativo"}
+              {mode === "login" ? "Acesso à plataforma" : "Cadastro"}
             </h2>
             <p className="mt-2 text-slate-400">
               {mode === "login"
-                ? "Preencha os campos para testar o acesso."
-                : "Crie um perfil temporário para testar o fluxo."}
+                ? "Preencha os campos para validar o acesso local."
+                : "Preencha os campos para validação local."}
             </p>
           </div>
 
@@ -184,7 +184,7 @@ export default function Login() {
             {status === "success" && (
               <CheckCircle2 aria-hidden="true" className="mr-2 inline" size={18} />
             )}
-            {message || "Use somente dados fictícios nesta demonstração acadêmica."}
+            {message}
           </div>
 
           <p className="mt-6 text-center text-sm text-slate-400">
