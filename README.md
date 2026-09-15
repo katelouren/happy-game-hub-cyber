@@ -1,4 +1,4 @@
-# Happy Game Hub — Fase 4
+# Happy Game Hub — Fase 5
 
 MVP acadêmico de treinamento cognitivo gamificado e conscientização em
 cibersegurança com apoio de IA, voltado ao desenvolvimento corporativo. Combina
