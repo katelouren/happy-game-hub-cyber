@@ -26,14 +26,18 @@ export default function AssistantLauncher() {
   if (pathname === "/cyber/assistente") return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6">
+    <div className="assistant-launcher fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false);
+      }}
+    >
       {isOpen && (
         <aside
           id="assistant-panel"
           role="dialog"
           aria-modal="false"
           aria-label="Assistente educativo do Happy Game Hub"
-          className="mb-3 w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-3xl border border-lime-400/30 bg-[#020817] shadow-2xl shadow-black/50"
+          className="mb-3 max-h-[calc(100dvh-7rem)] overflow-y-auto w-[calc(100vw-2rem)] max-w-md rounded-3xl border border-lime-400/30 bg-[#020817] shadow-2xl shadow-black/50"
         >
           <div className="flex items-center justify-between border-b border-slate-800 px-5 py-3">
             <p className="flex items-center gap-2 text-sm font-bold text-white">
@@ -65,6 +69,7 @@ export default function AssistantLauncher() {
         ref={launcherRef}
         type="button"
         onClick={() => setIsOpen((current) => !current)}
+        aria-label={isOpen ? "Fechar assistente" : "Pergunte ao assistente"}
         aria-expanded={isOpen}
         aria-controls="assistant-panel"
         aria-haspopup="dialog"

@@ -206,7 +206,6 @@ test("retorna sugestões adequadas à rota atual", () => {
     /CPF/i.test(suggestion),
   );
 
-  assert.match(getQuickPrompts("/cyber/prompts")[0], /prompt/i);
   assert.match(getQuickPrompts("/jogos")[0], /jogo/i);
   assert.match(getQuickPrompts("/cyber/senhas")[1], /senha/i);
   assert.match(assistantSuggestions[0], /e-mail.*senha/i);

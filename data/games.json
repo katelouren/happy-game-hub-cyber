@@ -3,78 +3,84 @@
     "id": 1,
     "nome": "Minecraft",
     "title": "Minecraft",
-    "categoria": "Criatividade",
-    "genre": "Criatividade",
+    "categoria": "Sandbox",
+    "genre": "Sandbox",
     "idade": "Livre",
     "beneficio": "Estimula criatividade, construção e resolução de problemas.",
     "risco": "Uso excessivo pode gerar sedentarismo.",
     "platform": "PC, consoles e dispositivos móveis",
     "thumbnail": null,
-    "game_url": "https://www.minecraft.net/pt-br"
+    "game_url": "https://www.minecraft.net/pt-br",
+    "competencyId": "creativity"
   },
   {
     "id": 2,
     "nome": "Portal 2",
     "title": "Portal 2",
-    "categoria": "Raciocínio",
-    "genre": "Raciocínio",
+    "categoria": "Puzzle",
+    "genre": "Puzzle",
     "idade": "10+",
     "beneficio": "Desenvolve lógica e pensamento crítico.",
     "risco": "Pode gerar frustração em desafios complexos.",
     "platform": "PC e consoles",
     "thumbnail": null,
-    "game_url": "https://store.steampowered.com/app/620/Portal_2/"
+    "game_url": "https://store.steampowered.com/app/620/Portal_2/",
+    "competencyId": "logical_reasoning"
   },
   {
     "id": 3,
     "nome": "Stardew Valley",
     "title": "Stardew Valley",
-    "categoria": "Planejamento",
-    "genre": "Planejamento",
+    "categoria": "Simulation",
+    "genre": "Simulation",
     "idade": "Livre",
     "beneficio": "Estimula organização e gestão de recursos.",
     "risco": "Pode levar a sessões prolongadas de jogo.",
     "platform": "PC, consoles e dispositivos móveis",
     "thumbnail": null,
-    "game_url": "https://www.stardewvalley.net/"
+    "game_url": "https://www.stardewvalley.net/",
+    "competencyId": "decision_making"
   },
   {
     "id": 4,
     "nome": "Rocket League",
     "title": "Rocket League",
-    "categoria": "Coordenação",
-    "genre": "Coordenação",
+    "categoria": "Sports",
+    "genre": "Sports",
     "idade": "Livre",
     "beneficio": "Melhora coordenação motora e tomada rápida de decisões.",
     "risco": "Competitividade excessiva pode gerar estresse.",
     "platform": "PC e consoles",
     "thumbnail": null,
-    "game_url": "https://www.rocketleague.com/"
+    "game_url": "https://www.rocketleague.com/",
+    "competencyId": "attention_concentration"
   },
   {
     "id": 5,
     "nome": "Civilization VI",
     "title": "Civilization VI",
-    "categoria": "Estratégia",
-    "genre": "Estratégia",
+    "categoria": "Strategy",
+    "genre": "Strategy",
     "idade": "10+",
     "beneficio": "Exercita visão de longo prazo, análise de consequências e tomada de decisão.",
     "risco": "Partidas longas exigem pausas e boa organização do tempo.",
     "platform": "PC, consoles e dispositivos móveis",
     "thumbnail": null,
-    "game_url": "https://store.steampowered.com/app/289070/Sid_Meiers_Civilization_VI/"
+    "game_url": "https://store.steampowered.com/app/289070/Sid_Meiers_Civilization_VI/",
+    "competencyId": "strategic_thinking"
   },
   {
     "id": 6,
     "nome": "Kerbal Space Program",
     "title": "Kerbal Space Program",
-    "categoria": "Aprendizado",
-    "genre": "Aprendizado",
+    "categoria": "Simulation",
+    "genre": "Simulation",
     "idade": "Livre",
     "beneficio": "Apresenta conceitos de física e engenharia por meio de experimentação prática.",
     "risco": "A curva de aprendizagem pode exigir apoio para jogadores iniciantes.",
     "platform": "PC e consoles",
     "thumbnail": null,
-    "game_url": "https://www.kerbalspaceprogram.com/"
+    "game_url": "https://www.kerbalspaceprogram.com/",
+    "competencyId": "problem_solving"
   }
 ]

@@ -2,7 +2,7 @@ import { Brain, ShieldCheck, Sparkles, Gamepad2 } from "lucide-react";
 
 export default function Sobre() {
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#020817] text-white">
       <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
 
         <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-10">
@@ -25,7 +25,7 @@ export default function Sobre() {
         <section className="mt-12 grid gap-8 md:grid-cols-2">
 
           <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-8">
-            <Brain size={50} className="mb-4 text-lime-400" />
+            <Brain aria-hidden="true" size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
               Desenvolvimento Cognitivo
@@ -39,21 +39,21 @@ export default function Sobre() {
           </div>
 
           <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-8">
-            <ShieldCheck size={50} className="mb-4 text-lime-400" />
+            <ShieldCheck aria-hidden="true" size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
               Segurança Digital
             </h2>
 
             <p className="text-slate-300 leading-relaxed">
-              A área Cyber reúne práticas sobre senhas, prompts, phishing e
+              A área Cyber reúne práticas sobre senhas, phishing e
               engenharia social, com apoio de um assistente educacional com IA
               para orientar comportamentos digitais mais seguros.
             </p>
           </div>
 
           <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-8">
-            <Sparkles size={50} className="mb-4 text-lime-400" />
+            <Sparkles aria-hidden="true" size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
               Trilhas Personalizadas
@@ -67,7 +67,7 @@ export default function Sobre() {
           </div>
 
           <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-8">
-            <Gamepad2 size={50} className="mb-4 text-lime-400" />
+            <Gamepad2 aria-hidden="true" size={50} className="mb-4 text-lime-400" />
 
             <h2 className="mb-4 text-2xl font-bold">
               Aprendizagem Contínua

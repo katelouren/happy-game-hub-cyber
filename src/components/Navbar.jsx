@@ -15,6 +15,7 @@ export default function Navbar() {
     { href: "/home", label: "Home" },
     { href: "/jogos", label: "Jogos" },
     { href: "/recomendacoes", label: "Recomendações" },
+    { href: "/evolucao", label: "Minha Evolução" },
     { href: "/cyber", label: "Cyber" },
     { href: "/sobre", label: "Sobre" },
   ];
@@ -67,7 +68,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-6 font-mono xl:flex">
+          <div className="hidden items-center gap-3 font-mono xl:flex">
             {links.map((link) => (
               <Link
                 key={link.href}

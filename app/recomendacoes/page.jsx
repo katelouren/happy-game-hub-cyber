@@ -1,5 +1,6 @@
 "use client";
 
+import { COMPETENCIES, getCompetency, normalizeCompetencyId } from "@/lib/competencies.mjs";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -30,7 +31,7 @@ function priorityLabel(priority) {
 export default function Recomendacoes() {
   const { activity, isHydrated, clearActivity } = useActivity();
   const [idade, setIdade] = useState("Adulto");
-  const [objetivo, setObjetivo] = useState("Criatividade");
+  const [objetivo, setObjetivo] = useState(COMPETENCIES[0].id);
   const [estilo, setEstilo] = useState("Construção");
   const [formStatus, setFormStatus] = useState("idle");
   const [feedback, setFeedback] = useState("");
@@ -42,9 +43,7 @@ export default function Recomendacoes() {
 
     let active = true;
 
-    const queryObjective = new URLSearchParams(window.location.search).get(
-      "objetivo",
-    );
+    const queryObjective = normalizeCompetencyId(new URLSearchParams(window.location.search).get("objetivo"));
     const savedProfile = activity.profile;
 
     queueMicrotask(() => {
@@ -56,7 +55,8 @@ export default function Recomendacoes() {
 
       if (savedProfile) {
         setIdade("Adulto");
-        setObjetivo(hasQueryObjective ? queryObjective : savedProfile.objetivo);
+        setObjetivo(hasQueryObjective ? queryObjective : savedProfile.objetivo ?? "");
+        if (!hasQueryObjective && !savedProfile.objetivo) setFeedback("Escolha uma das seis competências para atualizar seu perfil. Seus interesses e conclusões foram preservados.");
         setEstilo(savedProfile.estilo);
       } else if (hasQueryObjective) {
         setObjetivo(queryObjective);
@@ -64,7 +64,7 @@ export default function Recomendacoes() {
 
       if (hasQueryObjective) {
         document.querySelector("#perfil-jogador")?.scrollIntoView({
-          behavior: "smooth",
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
           block: "start",
         });
       }
@@ -123,13 +123,12 @@ export default function Recomendacoes() {
   }
 
   const historyCount =
-    activity.promptAnalyses.length +
     activity.gameInterests.length +
     activity.assistantInteractions.length +
     (activity.profile ? 1 : 0);
 
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#020817] text-white">
       <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-10">
           <p className="mb-4 inline-flex items-center gap-2 rounded-md border border-lime-400 px-4 py-2 text-xs font-bold uppercase tracking-widest text-lime-400">
@@ -178,17 +177,19 @@ export default function Recomendacoes() {
 
             <label htmlFor="objetivo" className="mb-5 block">
               <span className="mb-2 block font-semibold text-slate-200">
-                O que deseja desenvolver?
+                Competência que deseja desenvolver
               </span>
               <select
                 id="objetivo"
+                required
                 value={objetivo}
                 disabled={formStatus === "loading"}
                 onChange={handleFieldChange(setObjetivo)}
                 className="w-full rounded-xl border border-slate-700 bg-[#020817] p-4 text-slate-200 outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20"
               >
-                {recommendationOptions.objectives.map((item) => (
-                  <option key={item}>{item}</option>
+                {!objetivo && <option value="" disabled>Selecione uma competência</option>}
+                {COMPETENCIES.map(({ id, label }) => (
+                  <option key={id} value={id}>{label}</option>
                 ))}
               </select>
             </label>
@@ -303,8 +304,7 @@ export default function Recomendacoes() {
                       {item.reason}
                     </p>
                     <p className="mt-3 text-sm text-slate-400">
-                      <strong className="text-slate-200">Habilidade relacionada:</strong>{" "}
-                      {item.skill}
+                      {item.competencyId ? `Competência relacionada: ${getCompetency(item.competencyId).label}` : `Tema: ${item.topic}`}
                     </p>
 
                     <Link

@@ -49,6 +49,7 @@ test("servidor chama Responses com chave privada e devolve só a resposta", asyn
     assert.equal(body.model, "gpt-4.1-mini");
     assert.equal(body.input, question);
     assert.equal(body.store, false);
+    for (const id of ["creativity", "attention_concentration", "logical_reasoning", "strategic_thinking", "problem_solving", "decision_making"]) assert.ok(body.instructions.includes(id));
     assert.doesNotMatch(body.instructions, /contexto injetado/);
     assert.ok(options.signal instanceof AbortSignal);
     return Response.json({ status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: "Defina seu objetivo e o formato esperado." }] }] });

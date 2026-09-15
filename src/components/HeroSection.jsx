@@ -27,7 +27,7 @@ export default function HeroSection() {
               href="/jogos"
               className="flex min-h-[60px] items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-lime-400 px-8 py-[17px] text-base font-extrabold text-slate-950 transition hover:bg-lime-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-300"
             >
-              <Gamepad2 size={22} className="shrink-0" />
+              <Gamepad2 aria-hidden="true" size={22} className="shrink-0" />
               Explorar Jogos
             </Link>
 
@@ -35,7 +35,7 @@ export default function HeroSection() {
               href="/recomendacoes"
               className="flex min-h-[60px] items-center justify-center gap-3 whitespace-nowrap rounded-lg border border-lime-400 px-8 py-[17px] text-base font-extrabold text-white transition hover:bg-lime-400/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
             >
-              <Sparkles size={22} className="shrink-0 text-lime-400" />
+              <Sparkles aria-hidden="true" size={22} className="shrink-0 text-lime-400" />
               Minha trilha
             </Link>
           </div>
@@ -44,7 +44,7 @@ export default function HeroSection() {
         <div className="relative h-64 overflow-hidden rounded-3xl sm:h-[390px]">
           <Image
             src="/images/hero-gaming.png"
-            alt="Portal gamer futurista"
+            alt=""
             fill
             priority
             sizes="(max-width: 1023px) 100vw, 50vw"

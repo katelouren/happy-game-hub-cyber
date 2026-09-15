@@ -1,3 +1,4 @@
+import { COMPETENCIES } from "./competencies.mjs";
 const DEFAULT_SUGGESTIONS = [
   "O que encontro no Happy Game Hub?",
   "Como criar um bom prompt?",
@@ -60,6 +61,7 @@ const INTENTS = [
       "quiz",
       "memoria",
       "habilidade cognitiva",
+      "competencia",
       "recomendacao de jogo",
     ],
   },
@@ -107,9 +109,9 @@ const INTENTS = [
 
 const RESPONSES = {
   platform:
-    "O Happy Game Hub reúne jogos, recomendações e ferramentas educativas de cibersegurança. Use o menu principal para visitar cada área; na seção Cyber você encontra análises de senhas, prompts e este assistente.",
+    "O Happy Game Hub reúne jogos, recomendações e ferramentas educativas de cibersegurança. Use o menu principal para visitar cada área; na seção Cyber você encontra análise de senhas e este assistente.",
   games:
-    "Na área Jogos você pode explorar experiências educativas e cognitivas. Leia a descrição de cada card para escolher uma atividade e use Recomendações quando quiser uma sugestão mais direcionada.",
+    `Na área Jogos você pode explorar experiências relacionadas a ${COMPETENCIES.map(item => item.label).join(", ")}. Use Recomendações para escolher uma competência. Os indicadores são estimativas de interações; cibersegurança é tema do produto, não competência calculada.`,
   prompts:
     "Um bom prompt informa contexto, objetivo, público e formato esperado. Seja específico, peça uma resposta verificável e nunca inclua senhas, documentos, tokens ou outros dados pessoais.",
   ai:
@@ -511,7 +513,6 @@ export function createAssistantResponse(message, context = {}) {
  * Sugestões adequadas à página atual, usadas pelo launcher e pela página completa.
  */
 export function getQuickPrompts(pathname = "/") {
-  if (pathname.startsWith("/cyber/prompts")) return TOPIC_SUGGESTIONS.prompts;
   if (pathname.startsWith("/cyber/senhas")) return TOPIC_SUGGESTIONS.passwords;
   if (pathname.startsWith("/cyber/assistente")) return TOPIC_SUGGESTIONS.cyber;
   if (pathname.startsWith("/cyber")) return TOPIC_SUGGESTIONS.cyber;

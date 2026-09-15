@@ -23,6 +23,8 @@ export default function ApiGameCard({
   isInterested = false,
   isInterestReady = true,
   onToggleInterest,
+  isCompleted = false,
+  onSetCompleted,
 }) {
   const [failedImage, setFailedImage] = useState("");
   const coverUrl = thumbnail
@@ -61,7 +63,7 @@ export default function ApiGameCard({
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         <div className="flex flex-wrap items-center gap-2">
-          <span aria-label={`Habilidade associada: ${skill}`} className="rounded-full border border-lime-400/40 px-3 py-1 text-xs font-bold uppercase tracking-wider text-lime-400">
+          <span aria-label={`Competência relacionada: ${skill}`} className="rounded-full border border-lime-400/40 px-3 py-1 text-xs font-bold uppercase tracking-wider text-lime-400">
             {skill}
           </span>
           {age && (
@@ -131,6 +133,21 @@ export default function ApiGameCard({
             </span>
           )}
         </div>
+        {onSetCompleted && (
+          <div className="mt-3 border-t border-slate-800 pt-3">
+            <button
+              type="button"
+              aria-pressed={isCompleted}
+              aria-label={`${isCompleted ? "Desfazer conclusão de" : "Marcar como concluído:"} ${title}`}
+              disabled={!isInterestReady}
+              onClick={() => onSetCompleted(!isCompleted)}
+              className="min-h-11 rounded-lg px-2 py-2 text-sm font-semibold text-lime-300 hover:text-lime-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-300 disabled:opacity-60"
+            >
+              {isCompleted ? "Concluído · Desfazer" : "Marcar como concluído"}
+            </button>
+            <p className="mt-1 text-xs leading-relaxed text-slate-400">Conclusão declarada por você; não verificada pelo jogo externo.</p>
+          </div>
+        )}
       </div>
     </article>
   );

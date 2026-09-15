@@ -1,3 +1,4 @@
+import { getGameCompetencyId } from "../../../src/lib/gameSkills.mjs";
 const API_URL = "https://www.freetogame.com/api/games";
 
 export async function GET() {
@@ -19,7 +20,7 @@ export async function GET() {
 
     const games = await response.json();
 
-    return Response.json(games, {
+    return Response.json(games.map(game => ({ ...game, competencyId: getGameCompetencyId(game) })), {
       headers: {
         "Cache-Control":
           "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",

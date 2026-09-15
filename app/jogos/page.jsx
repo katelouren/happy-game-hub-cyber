@@ -1,5 +1,7 @@
 "use client";
 
+import { COMPETENCIES, normalizeCompetencyId } from "@/lib/competencies.mjs";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
@@ -12,8 +14,8 @@ import {
 } from "lucide-react";
 import ApiGameCard from "@/components/ApiGameCard";
 import { useActivity } from "@/hooks/useActivity";
-import { toggleGameInterest } from "@/lib/activityStore";
-import { getGameSkill, filterGamesBySkill } from "@/lib/gameSkills.mjs";
+import { toggleGameInterest, setGameCompleted } from "@/lib/activityStore";
+import { getGameSkill, getGameCompetencyId, filterGamesBySkill } from "@/lib/gameSkills.mjs";
 import localGames from "../../data/games.json";
 
 const API_URL = "/api/games";
@@ -45,7 +47,8 @@ function normalizeGame(game, index, source) {
     id: `${source}:${game.id ?? index}`,
     title,
     genre,
-    skill: getGameSkill({ title, genre }),
+    competencyId: getGameCompetencyId({ ...game, title, genre }),
+    skill: getGameSkill({ ...game, title, genre }),
     platform: normalizeText(game.platform, "Plataforma não informada"),
     thumbnail: safeHttpUrl(game.thumbnail),
     gameUrl: safeHttpUrl(game.game_url),
@@ -155,7 +158,11 @@ export default function Jogos() {
   }, []);
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(loadGames, 0);
+    const initialLoad = window.setTimeout(() => {
+      const selected = normalizeCompetencyId(new URLSearchParams(window.location.search).get("competencia"));
+      if (selected) setSelectedSkill(selected);
+      loadGames();
+    }, 0);
 
     return () => {
       window.clearTimeout(initialLoad);
@@ -163,18 +170,13 @@ export default function Jogos() {
     };
   }, [loadGames]);
 
-  const skills = useMemo(
-    () => [
-      "Todos",
-      ...Array.from(new Set(games.map((game) => game.skill))).sort((a, b) =>
-        a.localeCompare(b, "pt-BR"),
-      ),
-    ],
-    [games],
-  );
-
   const visibleGames = useMemo(
-    () => filterGamesBySkill(games, searchTerm, selectedSkill),
+    () => {
+      const filtered = filterGamesBySkill(games, searchTerm, selectedSkill);
+      // Preserve the current API catalog; offer the existing local catalog when a competence has no match.
+      return filtered.length || selectedSkill === "Todos" ? filtered
+        : filterGamesBySkill(normalizeCatalog(localGames, "local"), searchTerm, selectedSkill);
+    },
     [games, searchTerm, selectedSkill],
   );
 
@@ -198,7 +200,7 @@ export default function Jogos() {
   }
 
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#020817] text-white">
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-8 lg:p-10">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
@@ -270,8 +272,7 @@ export default function Jogos() {
                   Filtrar catálogo
                 </h2>
                 <p className="text-sm text-slate-400" aria-live="polite">
-                  {visibleGames.length} de {games.length}{" "}
-                  {games.length === 1 ? "jogo" : "jogos"}
+                  {visibleGames.length} {visibleGames.length === 1 ? "jogo encontrado" : "jogos encontrados"}
                 </p>
               </div>
 
@@ -295,15 +296,16 @@ export default function Jogos() {
                 </label>
 
                 <label>
-                  <span className="sr-only">Filtrar por habilidade cognitiva</span>
+                  <span className="sr-only">Filtrar por competência</span>
                   <select
                     value={selectedSkill}
                     onChange={(event) => setSelectedSkill(event.target.value)}
                     className="w-full rounded-xl border border-slate-700 bg-[#020817] px-4 py-3 text-slate-100 outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20"
                   >
-                    {skills.map((skill) => (
-                      <option key={skill} value={skill}>
-                        {skill === "Todos" ? "Todas as habilidades" : skill}
+                    <option value="Todos">Todas as competências</option>
+                    {COMPETENCIES.map(({ id, label }) => (
+                      <option key={id} value={id}>
+                        {label}
                       </option>
                     ))}
                   </select>
@@ -313,6 +315,9 @@ export default function Jogos() {
           </section>
         )}
 
+        {source === "api" && visibleGames.some(game => game.source === "local") && (
+          <p className="mt-4 text-sm text-slate-400">Resultados do catálogo local para a competência selecionada.</p>
+        )}
         <p className="sr-only" role="status" aria-live="polite">
           {feedback}
         </p>
@@ -334,7 +339,7 @@ export default function Jogos() {
           </section>
         ) : visibleGames.length > 0 ? (
           <section
-            aria-label={`Catálogo de jogos ${source === "local" ? "local" : "da FreeToGame"}`}
+            aria-label={`Catálogo de jogos ${visibleGames.every(game => game.source === "local") ? "local" : "da FreeToGame"}`}
             className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
             {visibleGames.map((game, index) => (
@@ -352,6 +357,11 @@ export default function Jogos() {
                 isInterested={interestedIds.has(String(game.id))}
                 isInterestReady={isHydrated}
                 onToggleInterest={() => handleToggleInterest(game)}
+                isCompleted={activity.gameCompletions.some((item) => String(item.id) === String(game.id))}
+                onSetCompleted={(completed) => {
+                  setGameCompleted(game, completed);
+                  setFeedback(completed ? `${game.title}: conclusão declarada por você.` : `${game.title}: conclusão desfeita.`);
+                }}
               />
             ))}
           </section>

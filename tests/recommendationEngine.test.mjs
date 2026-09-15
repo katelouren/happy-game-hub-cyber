@@ -7,10 +7,10 @@ test("oferece início útil quando ainda não há histórico", () => {
 
   assert.equal(result.personalized, false);
   assert.ok(result.items.length >= 3);
-  assert.ok(result.items.some((item) => item.href === "/cyber/prompts"));
+  assert.ok(result.items.some((item) => item.href === "/cyber/assistente"));
 });
 
-test("combina perfil e avaliação de prompt por prioridade", () => {
+test("prioriza o perfil e ignora avaliações antigas da funcionalidade removida", () => {
   const result = generateRecommendations({
     profile: {
       idade: "Adolescente",
@@ -23,11 +23,11 @@ test("combina perfil e avaliação de prompt por prioridade", () => {
   });
 
   assert.equal(result.personalized, true);
-  assert.equal(result.items[0].id, "prompt-structure");
+  assert.equal(result.items[0].title, "Portal 2");
   assert.ok(result.items.some((item) => item.title === "Portal 2"));
 });
 
-test("prioriza segurança após uma avaliação de alto risco e não duplica itens", () => {
+test("preserva interesses sem duplicar itens ao receber dados antigos", () => {
   const result = generateRecommendations({
     profile: {
       idade: "Adulto",
@@ -40,36 +40,16 @@ test("prioriza segurança após uma avaliação de alto risco e não duplica ite
   });
   const ids = result.items.map((item) => item.id);
 
-  assert.equal(result.items[0].id, "prompt-safety");
+  assert.equal(result.items[0].title, "Civilization VI");
+  assert.ok(result.items.some((item) => item.id === "game-interest"));
   assert.equal(new Set(ids).size, ids.length);
 });
 
-test("oferece uma trilha coerente para o objetivo Segurança Digital", () => {
-  const result = generateRecommendations({
-    profile: {
-      idade: "Adolescente",
-      objetivo: "Segurança Digital",
-      estilo: "Puzzle",
-    },
-    promptAnalyses: [],
-    gameInterests: [],
-    assistantInteractions: [],
-  });
-  const cyberRecommendation = result.items.find(
-    (item) => item.title === "Desafio Cyber do Happy Game Hub",
-  );
-
-  assert.ok(cyberRecommendation);
-  assert.equal(cyberRecommendation.href, "/cyber");
-  assert.match(cyberRecommendation.skill, /cidadania digital/i);
-  assert.match(cyberRecommendation.reason, /situações suspeitas/i);
-  assert.ok(
-    result.items.some((item) => item.href === "/cyber/assistente"),
-  );
-  assert.equal(
-    result.items.filter((item) => item.href === "/cyber").length,
-    1,
-  );
+test("objetivo incompatível pede nova seleção sem inventar desafio", () => {
+  const result = generateRecommendations({ profile: { objetivo: "Segurança Digital", estilo: "Puzzle" } });
+  assert.ok(result.items.some(item => item.href === "#perfil-jogador"));
+  assert.ok(result.items.every(item => !item.competencyId));
+  assert.doesNotMatch(JSON.stringify(result), /Desafio Cyber/);
 });
 
 test("considera idade, objetivo e estilo sem rotas ou temas contraditórios", () => {
@@ -86,7 +66,6 @@ test("considera idade, objetivo e estilo sem rotas ou temas contraditórios", ()
   const validRoutes = new Set([
     "/jogos",
     "/cyber",
-    "/cyber/prompts",
     "/cyber/assistente",
   ]);
 
@@ -101,7 +80,7 @@ test("considera idade, objetivo e estilo sem rotas ou temas contraditórios", ()
     const serialized = JSON.stringify(result);
 
     assert.equal(new Set(ids).size, ids.length);
-    assert.ok(result.items.every((item) => validRoutes.has(item.href)));
+    assert.ok(result.items.every((item) => validRoutes.has(item.href.split("?")[0]) || item.href === "#perfil-jogador"));
     assert.doesNotMatch(
       serialized,
       /recursos humanos|seleção profissional|playintel|avaliação psicológica|análise comportamental/i,
@@ -115,4 +94,10 @@ test("considera idade, objetivo e estilo sem rotas ou temas contraditórios", ()
     assistantInteractions: [],
   });
   assert.match(childResult.items[0].reason, /acompanhamento responsável/i);
+});
+
+test("histórico exclusivo de avaliações antigas retorna atividades atuais", () => {
+  const result = generateRecommendations({ promptAnalyses: [{ score: 30, risk: "Alto" }] });
+  assert.equal(result.personalized, false);
+  assert.ok(result.items.every((item) => ["#perfil-jogador", "/jogos", "/cyber/assistente"].includes(item.href)));
 });

@@ -25,11 +25,11 @@ export default function Senhas() {
   const listaCriterios = analysis.criteria;
 
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#020817] text-white">
       <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-10">
           <p className="mb-4 inline-flex items-center gap-2 rounded-md border border-lime-400 px-4 py-2 text-xs font-bold uppercase tracking-widest text-lime-400">
-            <ShieldCheck size={16} />
+            <ShieldCheck aria-hidden="true" size={16} />
             Segurança de Senhas
           </p>
 
@@ -46,7 +46,7 @@ export default function Senhas() {
         <section className="mt-10 grid gap-8 lg:grid-cols-2">
           <div className="rounded-3xl border border-slate-800 bg-[#061225] p-5 sm:p-8">
             <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold">
-              <KeyRound className="text-lime-400" />
+              <KeyRound aria-hidden="true" className="text-lime-400" />
               Teste sua senha
             </h2>
 
@@ -166,7 +166,7 @@ export default function Senhas() {
                         : "text-slate-400"
                     }
                   >
-                    {criterio.label}
+                    <span className="sr-only">{criterio.valid ? "Atendido: " : "Pendente: "}</span>{criterio.label}
                   </span>
                 </div>
               ))}

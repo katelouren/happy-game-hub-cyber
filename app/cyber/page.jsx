@@ -1,44 +1,28 @@
 import Link from "next/link";
 import {
   ShieldCheck,
-  KeyRound,
-  MessageSquareWarning,
   Bot,
   ArrowRight,
 } from "lucide-react";
 
 const ferramentas = [
   {
-    icon: KeyRound,
-    titulo: "Analisador de Senhas",
-    descricao:
-      "Avalie a força de uma senha e receba recomendações para torná-la mais segura.",
-    href: "/cyber/senhas",
-  },
-  {
-    icon: MessageSquareWarning,
-    titulo: "Avaliador de Prompts",
-    descricao:
-      "Analise prompts, identifique possíveis riscos e pratique uma definição de escopo mais segura.",
-    href: "/cyber/prompts",
-  },
-  {
     icon: Bot,
     titulo: "Assistente de Cibersegurança e Aprendizagem",
     descricao:
-      "Converse sobre a plataforma, jogos, prompts, IA e boas práticas de segurança digital.",
+      "Converse sobre a plataforma, jogos, IA e boas práticas de segurança digital.",
     href: "/cyber/assistente",
   },
 ];
 
 export default function Cyber() {
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#020817] text-white">
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
 
         <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-10">
           <p className="mb-4 inline-flex items-center gap-2 rounded-md border border-lime-400 px-4 py-2 text-xs font-bold uppercase tracking-widest text-lime-400">
-            <ShieldCheck size={16} />
+            <ShieldCheck aria-hidden="true" size={16} />
             Segurança Digital
           </p>
 
@@ -49,12 +33,12 @@ export default function Cyber() {
           <p className="max-w-3xl text-base leading-relaxed text-slate-300 md:text-lg">
             Pratique a conscientização em cibersegurança no ambiente corporativo:
             senhas, uso responsável de IA e reconhecimento de phishing e
-            engenharia social. As atividades ajudam a refletir sobre riscos e
+            engenharia social. O assistente ajuda a refletir sobre riscos e
             comportamentos digitais mais seguros.
           </p>
         </div>
 
-        <section className="mt-10 grid gap-6 lg:grid-cols-3">
+        <section className="mx-auto mt-10 grid max-w-3xl gap-6">
           {ferramentas.map((ferramenta) => {
             const Icon = ferramenta.icon;
 
@@ -65,7 +49,7 @@ export default function Cyber() {
                 className="group rounded-3xl border border-slate-800 bg-[#061225] p-6 transition hover:border-lime-400/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400 sm:p-8"
               >
                 <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-lime-400/20 bg-[#020817]">
-                  <Icon size={30} className="text-lime-400" />
+                  <Icon aria-hidden="true" size={30} className="text-lime-400" />
                 </div>
 
                 <h2 className="mb-3 text-2xl font-extrabold">
@@ -78,7 +62,7 @@ export default function Cyber() {
 
                 <span className="flex items-center gap-2 font-bold text-lime-400">
                   Acessar ferramenta
-                  <ArrowRight
+                  <ArrowRight aria-hidden="true"
                     size={18}
                     className="transition group-hover:translate-x-1"
                   />
@@ -89,8 +73,8 @@ export default function Cyber() {
         </section>
 
         <section className="mt-10 rounded-3xl border border-lime-400/20 bg-[#061225] p-6 sm:p-8">
-          <div className="flex items-start gap-4">
-            <ShieldCheck
+          <div className="flex items-start gap-4 [&>div]:min-w-0">
+            <ShieldCheck aria-hidden="true"
               size={36}
               className="mt-1 shrink-0 text-lime-400"
             />
@@ -105,7 +89,7 @@ export default function Cyber() {
                 durante a mentoria de Cybersecurity da Palo Alto Networks,
                 incorporando boas
                 práticas relacionadas à complexidade de senhas, uso responsável
-                de Inteligência Artificial, definição adequada de prompts e
+                de Inteligência Artificial e
                 análise de situações de risco.
               </p>
             </div>

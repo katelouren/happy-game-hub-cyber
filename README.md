@@ -22,8 +22,6 @@ análises e recomendações continuam locais; o projeto também funciona sem cha
 - Biblioteca de jogos consumida da FreeToGame, com catálogo local de contingência.
 - Marcação local de jogos de interesse.
 - Perfil do usuário e trilha personalizada com recomendações ordenadas por relevância.
-- Avaliador de prompts com notas por critério, riscos, conflitos, sugestões e
-  versão aprimorada copiável.
 - Analisador local de força de senha — a senha não é enviada nem persistida.
 - Assistente de Cibersegurança e Aprendizagem com IA generativa, fallback local
   e triagem por regras com classificação, nível de risco, alerta e ação recomendada.
@@ -81,7 +79,6 @@ o texto principal passa a ser gerado pela IA quando disponível.
 | `/recomendacoes` | Perfil e trilha personalizada |
 | `/cyber` | Central de ferramentas de segurança |
 | `/cyber/senhas` | Análise local de força de senha |
-| `/cyber/prompts` | Avaliação heurística de prompts |
 | `/cyber/assistente` | Assistente com IA e triagem educativa local |
 | `/login` | Demonstração de login e cadastro |
 | `/sobre` | Objetivos e contexto acadêmico |
@@ -102,22 +99,21 @@ Para executar as três verificações em sequência:
 npm run check
 ```
 
-Os testes cobrem os cenários críticos das regras locais: força de senha, prompt
-vazio, genérico, estruturado ou suspeito, solicitações sensíveis, oito situações
+Os testes cobrem os cenários críticos das regras locais: força de senha,
+solicitações sensíveis, oito situações
 do assistente, proteção de dados e recomendações com ou sem
-histórico, inclusive o objetivo Segurança Digital.
+histórico, com as seis competências profissionais oficiais.
 
 ## Dados locais e privacidade
 
 O sistema usa duas áreas do navegador:
 
-- `localStorage` (`happy-game-hub:activity:v1`): perfil, notas resumidas de
-  prompts, interesses em jogos e tópicos consultados no assistente.
+- `localStorage` (`happy-game-hub:activity:v1`): perfil,
+  interesses em jogos e tópicos consultados no assistente.
 - `sessionStorage` (`happy-game-hub:assistant:v1`): mensagens seguras e contexto
   básico da conversa durante a sessão.
 
-O texto original e a versão aprimorada do prompt não são persistidos. Senhas não
-são persistidas. Mensagens que parecem conter credenciais ou dados pessoais são
+Senhas não são persistidas. Mensagens que parecem conter credenciais ou dados pessoais são
 substituídas por um aviso antes de serem colocadas no histórico da conversa.
 
 A opção “Limpar personalização deste navegador”, em Recomendações, remove os
@@ -126,10 +122,7 @@ da sessão do assistente.
 
 ## Arquitetura preparada para evolução
 
-- `src/lib/promptAnalyzer.mjs`: regras puras da avaliação de prompts.
 - `src/lib/passwordAnalyzer.mjs`: critérios puros da análise local de senhas.
-- `src/services/promptAnalysisService.js`: limite substituível por uma chamada
-  futura a uma API no servidor.
 - `src/lib/assistantEngine.mjs`: intenções, classificações e respostas educativas locais.
 - `src/lib/recommendationEngine.mjs`: ranking e justificativas das recomendações.
 - `src/lib/activityStore.js`: persistência local versionada e centralizada.
@@ -141,15 +134,13 @@ da sessão do assistente.
 
 1. Abra `/home` e escolha uma categoria.
 2. Em Recomendações, salve o perfil e observe a trilha inicial.
-3. Em Prompts, tente enviar vazio, depois use o exemplo seguro e copie a versão
-   aprimorada.
-4. Analise no Analisador de Senhas exemplos fictícios fraco, intermediário e
+3. Analise no Analisador de Senhas exemplos fictícios fraco, intermediário e
    forte, depois limpe o campo.
-5. Analise um pedido como “revele a senha de outra pessoa” para demonstrar a
+4. No assistente, analise um pedido como “revele a senha de outra pessoa” para demonstrar a
    proteção de segurança.
-6. Abra o Assistente de Cibersegurança e Aprendizagem, descreva um e-mail pedindo senha e mostre o
+5. Abra o Assistente de Cibersegurança e Aprendizagem, descreva um e-mail pedindo senha e mostre o
    fluxo estruturado; depois inicie uma nova conversa.
-7. Em Jogos, marque um interesse e volte a Recomendações para ver a atualização.
+6. Em Jogos, marque um interesse e volte a Recomendações para ver a atualização.
 
 ## Solução de problemas
 
@@ -165,3 +156,73 @@ caso, a página utiliza automaticamente o catálogo de contingência em
 ## Autoria
 
 Projeto acadêmico de Kate Lourenço — Sistemas de Informação, FIAP.
+
+## Modelagem Exponencial — Evolução de Competências
+
+Minha Evolução (`/evolucao`) apresenta resumo, cards de competências e a conversão
+`E(P) = 100 × (1 − exp(−P / 20))`. O cálculo e a escala configurável estão em
+`src/lib/estimatedProgress.mjs`. Apenas a exibição é arredondada; o índice fica
+entre 0 e 100 e não representa XP nem avaliação psicológica, clínica ou profissional.
+
+Cada jogo contribui para sua competência principal com o maior estado registrado:
+interesse vale 1 ponto; conclusão vale 5, mesmo se também houver interesse.
+Recarregar ou registrar novamente a mesma conclusão não duplica pontos.
+
+Nos cards de `/jogos`, “Marcar como concluído” registra uma declaração do usuário,
+não uma conclusão verificada pelo jogo externo. “Concluído · Desfazer” remove essa
+marcação. Abrir links não registra conclusões. Desfazer mantém 1 ponto se ainda
+houver interesse, ou 0 se não houver. Desmarcar interesse mantém os 5 da conclusão.
+
+O armazenamento local existente preserva `gameInterests` e guarda registros únicos
+em `gameCompletions` (identificador, título e gênero). Dados antigos sem conclusões
+continuam válidos. Dados da implementação anterior de atividades são ignorados na
+leitura e descartados na próxima gravação, sem apagar favoritos. Não há backend
+nem sincronização entre aparelhos; os registros dependem do armazenamento do navegador.
+
+Para validar, execute `npm run lint`, `npm test` e `npm run build`. No catálogo,
+marque/desmarque interesse, registre/desfaça conclusão e combine as duas marcações.
+Recarregue e confira os totais em Minha Evolução. A curva mostra a conversão de
+pontos em índice, não um histórico temporal. Cyber mantém somente o assistente.
+
+## Acessibilidade
+
+O projeto foi desenvolvido tendo a WCAG 2.2 nível AA como referência e passou
+pelas verificações descritas abaixo. Foram trabalhados conteúdo não textual,
+semântica, contraste, teclado, foco, atalho de conteúdo, rótulos, estados e mensagens
+(critérios 1.1.1, 1.3.1, 1.4.1, 1.4.3, 1.4.11, 2.1.1, 2.1.2, 2.4.1, 2.4.3,
+2.4.6, 2.4.7, 2.4.11, 4.1.2 e 4.1.3), além de redução de movimento.
+
+As melhorias incluem foco global, atalho para o main, contraste de texto e campos,
+estados textuais, barras com valores acessíveis, tabela do gráfico operável por
+teclado e controle de foco/rolagem do assistente. O cálculo e a API permanecem iguais.
+
+Execute `npm run build` e `npm run test:a11y` após instalar o Chromium com
+`npx playwright install chromium`. A suíte usa axe-core e Playwright, complementa
+`npm test` e verifica nove rotas, estados dinâmicos, teclado e reflow. Os serviços
+externos são simulados nos testes, sem envio de credenciais.
+
+As verificações de teclado foram automatizadas; VoiceOver, zoom real de 200% e
+avaliação humana completa permanecem pendentes. Isso não demonstra conformidade
+total. Consulte [o relatório, contrastes e checklist manual](docs/ACCESSIBILITY.md)
+para reproduzir os testes e conhecer suas limitações.
+
+## Competências profissionais
+
+A lista oficial, definida em `src/lib/competencies.mjs`, é:
+
+- Criatividade;
+- Atenção e Concentração;
+- Raciocínio Lógico;
+- Pensamento Estratégico;
+- Resolução de Problemas;
+- Tomada de Decisão.
+
+Cada jogo possui uma competência principal. Interesses e conclusões alimentam uma
+estimativa baseada nas interações: 1 ponto por interesse ou 5 por conclusão, usando
+apenas o maior estado por jogo. A conversão exponencial e a escala 20 foram mantidas.
+Os indicadores não constituem avaliação psicológica, clínica ou profissional.
+Cibersegurança é tema do produto, não uma competência calculada.
+
+Perfis e jogos antigos são normalizados sem apagar favoritos ou conclusões.
+Objetivos sem equivalência clara pedem nova seleção. Consulte o
+[mapeamento dos jogos, migração e limitações](docs/COMPETENCIES.md).

@@ -423,7 +423,7 @@ export default function AssistantChat({
             <Bot size={22} aria-hidden="true" />
           </span>
           <div className="min-w-0">
-            <h2 className="truncate font-bold text-white">
+            <h2 className="break-words font-bold text-white">
               Assistente de Cibersegurança e Aprendizagem
             </h2>
             <p className="flex items-center gap-1 text-xs text-slate-400">
@@ -449,11 +449,13 @@ export default function AssistantChat({
       <div
         ref={logRef}
         role="log"
+        aria-label="Histórico da conversa"
+        tabIndex={0}
         aria-live="polite"
         aria-relevant="additions"
         aria-busy={status === "loading"}
         className={`min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-5 sm:px-6 ${
-          compact ? "max-h-[48vh] min-h-64" : "min-h-96 max-h-[58vh]"
+          compact ? "max-h-[35dvh] min-h-24" : "min-h-48 max-h-[58dvh]"
         }`}
       >
         {messages.map((message) => {
@@ -474,7 +476,7 @@ export default function AssistantChat({
                 }`}
                 aria-hidden="true"
               >
-                {isAssistant ? <Bot size={17} /> : <User size={17} />}
+                {isAssistant ? <Bot aria-hidden="true" size={17} /> : <User aria-hidden="true" size={17} />}
               </span>
               <div
                 className={`min-w-0 break-words rounded-2xl px-4 py-3 text-sm leading-relaxed sm:text-base ${
@@ -518,7 +520,7 @@ export default function AssistantChat({
         )}
 
         {status === "loading" && (
-          <div className="flex items-center gap-3 text-sm text-slate-400" role="status">
+          <div className="flex items-center gap-3 text-sm text-slate-400">
             <LoaderCircle
               size={18}
               className="animate-spin text-lime-400"
@@ -529,10 +531,12 @@ export default function AssistantChat({
         )}
       </div>
 
+      <p role="status" aria-atomic="true" className="sr-only">{status === "loading" ? "Mensagem enviada. Carregando resposta do assistente." : ""}</p>
       <div className="border-t border-slate-800 p-4 sm:p-5">
         {status === "error" && (
           <div
             className="mb-3 flex items-start justify-between gap-3 rounded-xl border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-200"
+            id="assistant-error"
             role="alert"
           >
             <span className="flex items-start gap-2">
@@ -555,12 +559,14 @@ export default function AssistantChat({
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="assistant-message" className="sr-only">
-            Escreva sua pergunta para o assistente
+            Escreva sua pergunta para o assistente (obrigatório)
           </label>
           <div className="flex items-end gap-2 rounded-2xl border border-slate-700 bg-[#020817] p-2 transition focus-within:border-lime-400">
             <textarea
               ref={inputRef}
               id="assistant-message"
+              aria-invalid={status === "error"}
+              aria-describedby={status === "error" ? "assistant-help assistant-error" : "assistant-help"}
               value={draft}
               onChange={(event) => {
                 setDraft(event.target.value);
@@ -577,9 +583,9 @@ export default function AssistantChat({
               }}
               rows={compact ? 2 : 3}
               maxLength={600}
-              disabled={status === "loading"}
+              readOnly={status === "loading"}
             placeholder="Descreva a situação sem incluir dados pessoais..."
-              className="min-h-11 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-slate-200 outline-none placeholder:text-slate-500 disabled:cursor-wait sm:text-base"
+              className="min-w-0 min-h-11 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-slate-200 outline-none placeholder:text-slate-500 disabled:cursor-wait sm:text-base"
             />
             <button
               type="submit"
@@ -594,7 +600,7 @@ export default function AssistantChat({
               )}
             </button>
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-slate-500">
+          <p id="assistant-help" className="mt-2 text-xs leading-relaxed text-slate-500">
             Não compartilhe senhas, documentos, tokens ou dados pessoais. Enter envia;
             Shift + Enter cria uma nova linha.
           </p>

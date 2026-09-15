@@ -1,3 +1,4 @@
+import { COMPETENCIES } from "@/lib/competencies.mjs";
 import HeroSection from "@/components/HeroSection";
 import FeatureCard from "@/components/FeatureCard";
 import CategoryCard from "@/components/CategoryCard";
@@ -26,19 +27,9 @@ const features = [
   },
 ];
 
-const categories = [
-  { title: "Criatividade" },
-  { title: "Raciocínio" },
-  { title: "Planejamento" },
-  { title: "Coordenação" },
-  { title: "Estratégia" },
-  { title: "Aprendizado" },
-  { title: "Segurança Digital" },
-];
-
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#020817] text-white">
       <section className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 lg:px-8">
         <div className="rounded-[2rem] border border-slate-800 bg-[#020817] p-0">
           <HeroSection />
@@ -65,8 +56,8 @@ export default function Home() {
           </h2>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.map((category) => (
-              <CategoryCard key={category.title} title={category.title} />
+            {COMPETENCIES.map((category) => (
+              <CategoryCard key={category.id} competency={category} />
             ))}
           </div>
         </section>

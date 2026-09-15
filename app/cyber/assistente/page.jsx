@@ -16,7 +16,7 @@ export const metadata = {
 
 export default function AssistentePage() {
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#020817] text-white">
       <section className="mx-auto max-w-6xl px-4 py-8 sm:px-8 sm:py-12">
         <div className="rounded-3xl border border-slate-800 bg-[#061225] p-6 sm:p-10">
           <p className="mb-4 inline-flex items-center gap-2 rounded-md border border-lime-400 px-4 py-2 text-xs font-bold uppercase tracking-widest text-lime-400">
@@ -26,7 +26,7 @@ export default function AssistentePage() {
 
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="flex items-center gap-3 text-4xl font-extrabold md:text-5xl">
+              <h1 className="flex flex-wrap items-center gap-3 text-4xl font-extrabold md:text-5xl">
                 <Bot className="shrink-0 text-lime-400" aria-hidden="true" />
                 Assistente de Cibersegurança e Aprendizagem
               </h1>
@@ -87,10 +87,10 @@ export default function AssistentePage() {
               <h2 className="text-lg font-bold">Continue aprendendo</h2>
               <div className="mt-4 space-y-3">
                 <Link
-                  href="/cyber/prompts"
+                  href="/cyber/senhas"
                   className="flex items-center justify-between gap-3 rounded-lg text-sm font-bold text-lime-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
                 >
-                  Avaliar um prompt
+                  Praticar segurança de senhas
                   <ArrowRight aria-hidden="true" size={16} />
                 </Link>
                 <Link
