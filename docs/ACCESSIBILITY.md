@@ -123,9 +123,9 @@ autenticação local, cálculo exponencial ou integração da IA.
 ## Resultado desta execução
 
 - `npm run lint`: aprovado.
-- `npm test`: 46 aprovados.
+- `npm test`: 50 aprovados.
 - `npm run build`: aprovado.
-- `npm run test:a11y`: 13 aprovados; nenhuma violação axe nos estados auditados.
+- `npm run test:a11y`: 15 aprovados; nenhuma violação axe nos estados auditados.
 - Nenhum `.env` pendente nem credencial local encontrada nos arquivos alterados.
 - Inspeção visual adicional por captura: pendente. A revisão automática de
   permissões rejeitou a execução por indisponibilidade/capacidade do serviço de
