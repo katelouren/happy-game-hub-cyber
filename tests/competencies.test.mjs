@@ -9,6 +9,8 @@ import { readActivity, setGameCompleted } from '../src/lib/activityStore.js';
 
 test('seis competências canônicas, completas e ordenadas',()=>{
  assert.equal(COMPETENCIES.length,6);
+ assert.deepEqual(COMPETENCIES.map(c=>c.label), ['Criatividade', 'Atenção e Concentração', 'Raciocínio Lógico', 'Pensamento Estratégico', 'Resolução de Problemas', 'Tomada de Decisão']);
+ assert.ok(COMPETENCIES.every(c=>c.label !== 'Memória'));
  assert.equal(new Set(COMPETENCIES.map(c=>c.id)).size,6);
  assert.deepEqual(COMPETENCIES.map(c=>c.order),[1,2,3,4,5,6]);
  assert.ok(COMPETENCIES.every(c=>/^[a-z_]+$/.test(c.id)&&c.description&&c.examples.length));
@@ -26,7 +28,7 @@ test('equivalências claras migram; objetivos incompatíveis não recebem substi
 test('todos os jogos locais e recomendações usam a competência principal válida',()=>{
  for(const game of games) assert.ok(getCompetency(game.competencyId));
  for(const c of COMPETENCIES) {
-  const result=generateRecommendations({profile:{objetivo:c.id,estilo:'Puzzle',idade:'Adulto'}});
+  const result=generateRecommendations({profile:{objetivo:c.id,estilo:'Puzzle'}});
   assert.equal(result.items[0].competencyId,c.id);
   const game=games.find(g=>g.title===result.items[0].title);
   assert.equal(getGameCompetencyId(game),c.id);

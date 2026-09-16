@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-const routes = ['/home', '/jogos', '/recomendacoes', '/evolucao', '/cyber', '/login', '/cyber/assistente', '/cyber/senhas', '/sobre'];
+const routes = ['/home', '/jogos', '/recomendacoes', '/evolucao', '/cyber', '/cyber/assistente', '/sobre'];
 test.beforeEach(async ({ page }) => {
   await page.route('**/api/games', route => route.fulfill({ json: [{ id: 1, title: 'Jogo de teste', genre: 'RPG', platform: 'PC', game_url: 'https://example.com' }] }));
-  await page.route('**/api/assistant', route => route.fulfill({ json: { answer: 'Use os canais oficiais da empresa para confirmar mensagens suspeitas.' } }));
+  await page.route('**/api/assistant', route => route.fulfill({ json: { answer: 'Use os canais oficiais da empresa para confirmar mensagens suspeitas.', provider: 'gemini', mode: 'live', unavailable: false } }));
 });
 async function audit(page) {
  const results = await new AxeBuilder({ page }).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
@@ -12,6 +12,11 @@ async function audit(page) {
 for (const route of routes) test(`axe, estrutura e atalho: ${route}`, async ({ page }) => {
  await page.goto(route);
  await expect(page.locator('main')).toHaveCount(1);
+ await expect(page.locator('a').filter({hasText: /Analisador de Senhas|Login/})).toHaveCount(0);
+ if(route==='/cyber') {
+  await expect(page.locator('main a')).toHaveCount(1);
+  await expect(page.locator('main a')).toHaveAttribute('href','/cyber/assistente');
+ }
  await expect(page.locator('h1')).toHaveCount(1);
  await expect(page.locator('html')).toHaveAttribute('lang','pt-BR');
  await page.keyboard.press('Tab');
@@ -80,21 +85,15 @@ test('mobile, viewport equivalente a zoom 200%, movimento e menu',async({page})=
  expect(await page.evaluate(()=>getComputedStyle(document.documentElement).scrollBehavior)).toBe('auto');
 });
 test('erros associados, navegação reversa e foco visível',async({page})=>{
- await page.goto('/login');
- const submit=page.getByRole('button',{name:'Validar acesso local'});
- await tabTo(page,submit); await page.keyboard.press('Enter');
- const email=page.getByRole('textbox',{name:'E-mail (obrigatório)'});
- await expect(email).toBeFocused();await expect(email).toHaveAttribute('aria-invalid','true');
- await expect(page.locator('#email-error')).toContainText(/e-mail/);
- await audit(page);
- await page.keyboard.press('Tab');
- await page.keyboard.press('Shift+Tab'); await expect(email).toBeFocused();
- expect(await email.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('solid');
  await page.goto('/cyber/assistente');
  const message=page.getByRole('textbox',{name:/Escreva sua pergunta/});
  await tabTo(page,message);await page.keyboard.press('Enter');
  await expect(message).toHaveAttribute('aria-invalid','true');
  await expect(page.getByRole('alert').filter({hasText:'Digite uma pergunta'})).toBeVisible();
+ await page.keyboard.press('Tab');
+ await page.keyboard.press('Shift+Tab');
+ await expect(message).toBeFocused();
+ expect(await message.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('solid');
  await audit(page);
 });
 test('seis competências: Home, seletores e recomendações por teclado',async({page})=>{
@@ -125,9 +124,79 @@ test('seis competências: Home, seletores e recomendações por teclado',async({
 });
 test('perfil incompatível mantém favoritos e pede nova competência',async({page})=>{
  await page.goto('/recomendacoes');
- await page.evaluate(()=>localStorage.setItem('happy-game-hub:activity:v1',JSON.stringify({profile:{objetivo:'Segurança Digital',idade:'Adulto',estilo:'Puzzle'},gameInterests:[{id:'local:4',title:'Rocket League',genre:'Coordenação'}],gameCompletions:[]})));
+ await page.evaluate(()=>localStorage.setItem('happy-game-hub:activity:v1',JSON.stringify({profile:{objetivo:'Segurança Digital',estilo:'Puzzle'},gameInterests:[{id:'local:4',title:'Rocket League',genre:'Coordenação'}],gameCompletions:[]})));
  await page.reload();
  await expect(page.getByLabel('Competência que deseja desenvolver')).toHaveValue('');
  await expect(page.getByRole('status').filter({hasText:'Seus interesses e conclusões foram preservados'})).toBeVisible();
+ await audit(page);
+});
+
+
+test('origem Gemini, contingência e proteção local permanecem identificadas na sessão', async ({page}) => {
+ await page.goto('/cyber/assistente');
+ const input = page.getByRole('textbox', {name: /Escreva sua pergunta/});
+ const log = page.getByRole('log');
+ const send = async message => {
+  await input.fill(message);
+  await input.press('Enter');
+  await expect(page.getByRole('button', {name:'Enviar pergunta', exact:true})).toBeEnabled();
+ };
+ await send('Como reconhecer phishing?');
+ await expect(log.getByText('Gerado com IA — Gemini', {exact:true})).toHaveCount(1);
+ await page.reload();
+ await expect(log.getByText('Gerado com IA — Gemini', {exact:true})).toHaveCount(1);
+ await page.route('**/api/assistant', route => route.fulfill({status:503, json:{error:'detalhe interno que não deve aparecer'}}));
+ await send('Como criar um bom prompt?');
+ await expect(log.getByText('IA indisponível — orientação local ativada', {exact:true})).toHaveCount(1);
+ await expect(log).not.toContainText('detalhe interno');
+ await audit(page);
+ let requests = 0;
+ page.on('request', request => { if (request.url().includes('/api/assistant')) requests++; });
+ await send('Minha senha é Segredo#123');
+ const last = log.locator('article').last();
+ await expect(last.getByText('Orientação local de segurança', {exact:true})).toBeVisible();
+ await expect(log).not.toContainText('Segredo#123');
+ expect(requests).toBe(0);
+ await page.reload();
+ await expect(log.getByText('IA indisponível — orientação local ativada', {exact:true})).toHaveCount(1);
+ await expect(log.locator('article').last().getByText('Orientação local de segurança', {exact:true})).toBeVisible();
+ expect(await page.evaluate(() => sessionStorage.getItem('happy-game-hub:assistant:v1'))).not.toContain('Segredo#123');
+ await audit(page);
+});
+
+
+test('perfil sem faixa etária migra dados antigos e salva competência e estilo', async ({page}) => {
+ await page.goto('/recomendacoes');
+ await page.evaluate(() => localStorage.setItem('happy-game-hub:activity:v1', JSON.stringify({
+  version: 1,
+  profile: {idade:'Criança', objetivo:'creativity', estilo:'Construção'},
+  gameInterests: [{id:'local:4',title:'Rocket League',genre:'Coordenação'}],
+  gameCompletions: [{id:'local:4',title:'Rocket League',genre:'Coordenação'}],
+  assistantInteractions: [{topic:'cyber'}],
+ })));
+ await page.reload();
+ const form = page.locator('#perfil-jogador');
+ await expect(form.getByRole('combobox')).toHaveCount(2);
+ await expect(form.getByRole('combobox').nth(0)).toHaveAccessibleName('Competência que deseja desenvolver');
+ await expect(form.getByRole('combobox').nth(1)).toHaveAccessibleName('Estilo de jogo preferido');
+ await expect(page.getByText('Faixa etária', {exact:true})).toHaveCount(0);
+ await expect(form.getByRole('combobox').nth(0)).toHaveValue('creativity');
+ const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem('happy-game-hub:activity:v1')));
+ expect((await stored()).profile).not.toHaveProperty('idade');
+ await form.getByRole('combobox').nth(0).selectOption('logical_reasoning');
+ await form.getByRole('combobox').nth(1).selectOption('Puzzle');
+ const save = page.getByRole('button', {name:'Salvar perfil e atualizar trilha'});
+ await tabTo(page, save); await page.keyboard.press('Enter');
+ await expect(page.getByRole('status').filter({hasText:'Perfil salvo'})).toBeVisible();
+ await expect(page.getByRole('heading', {name:'Portal 2'})).toBeVisible();
+ const data = await stored();
+ expect(data.profile).toMatchObject({objetivo:'logical_reasoning', estilo:'Puzzle'});
+ expect(data.profile).not.toHaveProperty('idade');
+ expect(data.gameInterests[0].id).toBe('local:4');
+ expect(data.gameCompletions[0].id).toBe('local:4');
+ expect(data.assistantInteractions).toEqual([{topic:'cyber'}]);
+ await page.reload();
+ await expect(form.getByRole('combobox').nth(0)).toHaveValue('logical_reasoning');
+ await expect(form.getByRole('combobox').nth(1)).toHaveValue('Puzzle');
  await audit(page);
 });

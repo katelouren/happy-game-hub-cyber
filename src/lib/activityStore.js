@@ -45,9 +45,18 @@ export function readActivity() {
 
   try {
     const storedValue = window.localStorage.getItem(STORAGE_KEY);
-    return storedValue
-      ? normalizeActivity(JSON.parse(storedValue))
-      : cloneEmptyActivity();
+    if (!storedValue) return cloneEmptyActivity();
+    const storedActivity = JSON.parse(storedValue);
+    if (storedActivity?.profile && Object.hasOwn(storedActivity.profile, "idade")) {
+      // Remova apenas o campo legado; preserve os demais dados persistidos.
+      delete storedActivity.profile.idade;
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(storedActivity));
+      } catch {
+        // O perfil em uso continua sem idade mesmo se a gravação for bloqueada.
+      }
+    }
+    return normalizeActivity(storedActivity);
   } catch {
     return cloneEmptyActivity();
   }
@@ -77,7 +86,6 @@ export function savePlayerProfile(profile) {
     ...activity,
     profile: {
       ...activity.profile,
-      idade: profile.idade,
       objetivo: profile.objetivo,
       estilo: profile.estilo,
       updatedAt: new Date().toISOString(),

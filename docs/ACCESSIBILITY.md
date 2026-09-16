@@ -46,19 +46,18 @@ PLAYWRIGHT_EXECUTABLE_PATH='/Applications/Google Chrome.app/Contents/MacOS/Googl
 O teste inicia e encerra um servidor de produção na porta 3107, que deve estar
 livre. `test-results/` e `playwright-report/` são ignorados pelo Git.
 As APIs de catálogo e assistente recebem respostas determinísticas interceptadas
-somente no navegador de teste; a suíte não chama OpenAI nem usa credenciais reais.
+somente no navegador de teste; a suíte não chama provedores de IA nem usa credenciais reais.
 A interface, o armazenamento local e a navegação são os componentes reais.
 
 ## Evidências automatizadas
 
 Suíte `tests/accessibility/pages.spec.mjs`, Chrome, axe-core e Playwright:
 
-- Rotas: Home, Jogos, Recomendações, Minha Evolução, Cyber, Login, Assistente,
-  Analisador de Senhas e Sobre.
+- Rotas: Home, Jogos, Recomendações, Minha Evolução, Cyber, Assistente e Sobre.
 - Axe com tags WCAG 2 A/AA, 2.1 AA e 2.2 AA; nenhuma regra desabilitada.
 - Estrutura, idioma, atalho de conteúdo, teclado nos jogos e tabela expandida.
 - Chat aberto, envio simulado, foco preservado, Esc e saída com Tab.
-- Erros de login e chat, foco visível, Shift+Tab e valores das barras.
+- Erros do chat, foco visível, Shift+Tab e valores das barras.
 - Reflow em larguras CSS de 720, 375 e 320 pixels e preferência de movimento reduzido.
 
 Uma viewport de 720 pixels reproduz a largura útil de uma janela de 1440 pixels
@@ -107,7 +106,7 @@ Não considerar itens abaixo aprovados somente por terem cobertura automatizada.
 | Zoom real 200% | Menu do Chrome → Zoom 200%; repetir rotas e abrir chat, sem perda de controles | Validação manual pendente; viewport equivalente automatizada |
 | Mobile | Testar 320/375 pixels, teclado virtual e rolagem do chat | Validação manual pendente; reflow automatizado |
 | Movimento reduzido | macOS → Acessibilidade → Tela → Reduzir movimento; navegar e atualizar perfil | Validação manual pendente; CSS automatizado |
-| Erros | Enviar login vazio e chat vazio, conferir rótulos e instruções sem apagar dados seguros | Validação manual pendente; cobertura automatizada |
+| Erros | Enviar chat vazio, conferir rótulos e instruções sem apagar dados seguros | Validação manual pendente; cobertura automatizada |
 | Imagens | Conferir se capas identificam o jogo e decoração não é anunciada | Validação manual pendente; revisão de código realizada |
 | Gráfico e barras | Ler competência, percentual, eixos e tabela com VoiceOver | Validação manual pendente; atributos automatizados |
 | Contraste | Conferir conteúdo real, foco e estados dinâmicos | Cálculos e axe executados; inspeção humana ampla pendente |
@@ -118,9 +117,9 @@ Sem auditoria humana completa, VoiceOver, teclado virtual ou testes em todos os
 navegadores. Conteúdo externo real pode diferir dos dados de teste. O gráfico
 mantém rolagem horizontal interna para preservar os eixos em telas pequenas e
 oferece tabela textual equivalente. Não foram alteradas regras de negócio,
-autenticação local, cálculo exponencial ou integração da IA.
+cálculo exponencial ou integração da IA.
 
-## Resultado desta execução
+## Resultado da execução anterior (antes da limpeza final)
 
 - `npm run lint`: aprovado.
 - `npm test`: 50 aprovados.
@@ -135,9 +134,9 @@ Arquivos trabalhados nesta etapa:
 
 - Estrutura e estilos: `app/layout.js`, `app/globals.css`.
 - Main, semântica ou ícones: `app/home/page.jsx`, `app/jogos/page.jsx`,
-  `app/recomendacoes/page.jsx`, `app/evolucao/page.jsx`, `app/login/page.jsx`,
+  `app/recomendacoes/page.jsx`, `app/evolucao/page.jsx`,
   `app/cyber/page.jsx`, `app/cyber/assistente/page.jsx`,
-  `app/cyber/senhas/page.jsx`, `app/sobre/page.jsx`.
+  `app/sobre/page.jsx`.
 - Componentes: `src/components/AssistantChat.jsx`,
   `src/components/AssistantLauncher.jsx`, `src/components/HeroSection.jsx`,
   `src/components/FeatureCard.jsx`, `src/components/CategoryCard.jsx`.
@@ -146,5 +145,30 @@ Arquivos trabalhados nesta etapa:
   `package-lock.json`, `.gitignore`.
 - Documentação: `README.md`, `docs/ACCESSIBILITY.md`.
 
-Outras alterações já pendentes antes desta etapa foram preservadas. Sem commit,
-merge ou push.
+
+## Verificação da limpeza final — 16/09/2026
+
+- `npm run lint`: aprovado.
+- `npm test`: 44 testes aprovados, incluindo competências, interesses, conclusões,
+  cálculo exponencial, integração simulada da IA, fallback e proteções locais.
+- `npm run build`: aprovado; manifesto conferido sem as duas rotas retiradas.
+- `npm run test:a11y`: 13 testes aprovados em Chromium, cobrindo as sete rotas
+  atuais; nenhuma violação axe nos estados auditados.
+- Navegação reversa e foco visível continuam verificados no campo do chat.
+- Build e Playwright precisaram executar fora do sandbox, pois o ambiente
+  restrito impediu a abertura das portas locais.
+- VoiceOver, zoom real de 200%, teclado virtual e inspeção visual humana continuam
+  pendentes. Não foi feita chamada real à OpenAI nesta verificação.
+
+
+## Verificação da integração Gemini — 16/09/2026
+
+- `npm run lint` e `npm run build`: aprovados.
+- `npm test`: 46 testes aprovados, com chamadas externas simuladas.
+- `npm run test:a11y`: 14 testes aprovados; nenhuma violação axe nos estados auditados.
+- Identificação de resposta Gemini, orientação local preventiva e contingência
+  verificada também após recarregar a conversa. Conteúdo sensível de teste não
+  foi enviado ao endpoint nem persistido no histórico.
+- Mantidas as verificações anteriores de teclado, menu mobile, reflow e foco.
+- Nenhuma chamada real à Gemini foi executada; permanecem as pendências manuais
+  de acessibilidade descritas neste documento.

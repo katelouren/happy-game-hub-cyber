@@ -207,7 +207,6 @@ test("retorna sugestões adequadas à rota atual", () => {
   );
 
   assert.match(getQuickPrompts("/jogos")[0], /jogo/i);
-  assert.match(getQuickPrompts("/cyber/senhas")[1], /senha/i);
   assert.match(assistantSuggestions[0], /e-mail.*senha/i);
   assert.ok(
     assistantSuggestions.some((suggestion) =>

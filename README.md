@@ -1,11 +1,11 @@
-# Happy Game Hub — Fase 5
+# Happy Game Hub — Enterprise Challenge — Atividade 4
 
 MVP acadêmico de treinamento cognitivo gamificado e conscientização em
 cibersegurança com apoio de IA, voltado ao desenvolvimento corporativo. Combina
 jogos, trilhas personalizadas e práticas educativas em dois eixos:
 
-- **Desenvolvimento cognitivo:** prática de atenção, memória, raciocínio lógico,
-  resolução de problemas, criatividade e tomada de decisão.
+- **Desenvolvimento cognitivo:** prática das seis competências oficiais
+  descritas na seção Competências profissionais.
 - **Segurança digital:** conscientização sobre senhas, phishing, engenharia
   social, privacidade e uso responsável de IA.
 
@@ -14,20 +14,19 @@ alegações de benefícios clínicos. Como visão futura, pode apoiar programas
 contínuos de treinamento e conscientização de equipes.
 
 O projeto utiliza Next.js 16 (App Router), React 19 e Tailwind CSS. O assistente
-usa IA generativa real da OpenAI com fallback local automático. As demais
+usa IA generativa real da Gemini com fallback local automático. As demais
 análises e recomendações continuam locais; o projeto também funciona sem chave.
+Esta versão não possui autenticação de usuários. Preferências, interesses,
+conclusões e evolução são mantidos localmente no navegador.
 
 ## Funcionalidades
 
 - Biblioteca de jogos consumida da FreeToGame, com catálogo local de contingência.
 - Marcação local de jogos de interesse.
 - Perfil do usuário e trilha personalizada com recomendações ordenadas por relevância.
-- Analisador local de força de senha — a senha não é enviada nem persistida.
 - Assistente de Cibersegurança e Aprendizagem com IA generativa, fallback local
   e triagem por regras com classificação, nível de risco, alerta e ação recomendada.
   A conversa é mantida durante a sessão.
-- Fluxo demonstrativo de login/cadastro sem transmissão ou armazenamento de
-  credenciais.
 - Layout responsivo, navegação por teclado e estados de carregamento, vazio,
   sucesso e erro.
 
@@ -49,26 +48,45 @@ Acesse [http://localhost:3000](http://localhost:3000). A raiz redireciona para
 Crie `.env.local` na raiz, usando `.env.example` como modelo:
 
 ```dotenv
-OPENAI_API_KEY=sua_chave_da_openai
-OPENAI_MODEL=gpt-4.1-mini
+AI_PROVIDER=gemini
+GEMINI_API_KEY=sua_chave_da_gemini
+GEMINI_MODEL=gemini-3.5-flash-lite
 ```
 
-`OPENAI_API_KEY` é necessária para ativar a IA real. `OPENAI_MODEL` é opcional;
-se ficar vazio, será usado `gpt-4.1-mini`. Reinicie `npm run dev` após configurar.
-Nunca envie chaves ao GitHub nem use `NEXT_PUBLIC_OPENAI_API_KEY`. Os arquivos
-`.env` e `.env.*` são ignorados pelo Git, exceto `.env.example`, que não contém segredos.
+`AI_PROVIDER=gemini` seleciona a Gemini Developer API. `GEMINI_API_KEY` é
+necessária para ativar a IA real e fica exclusivamente no servidor.
+`GEMINI_MODEL` define o modelo; se vazio, usa `gemini-3.5-flash-lite`.
+Reinicie o servidor após configurar. Nunca use `NEXT_PUBLIC_` para a chave.
+Os arquivos `.env` e `.env.*` são ignorados pelo Git, exceto `.env.example`,
+que não contém segredos.
 
-O chat chama `POST /api/assistant`; somente o servidor usa a chave para chamar a
-[Responses API da OpenAI](https://developers.openai.com/api/docs/guides/text)
-com `fetch`, instruções educativas em português e `store: false`. São enviados
-apenas a pergunta atual (até 600 caracteres) e um tópico validado, sem histórico.
-Conteúdo sensível detectado pelas regras existentes é respondido localmente,
-sem chamada externa; a rota também repete essa proteção.
+O navegador chama apenas `POST /api/assistant`. O servidor chama
+[`generateContent` da Gemini Developer API](https://ai.google.dev/api/generate-content)
+com `fetch` e a chave no cabeçalho `x-goog-api-key`. Envia somente a pergunta
+atual (até 600 caracteres), instruções educativas e um tópico validado;
+não envia histórico, perfil, interesses ou conclusões de jogos.
+As regras existentes bloqueiam conteúdo sensível no cliente e novamente no
+servidor, respondendo localmente sem chamada externa. Essas regras são uma
+proteção preventiva, não uma garantia de detectar todo dado sensível; não
+compartilhe informações pessoais ou credenciais.
 
-Sem chave, com erro, resposta inválida ou timeout (12 segundos no servidor e
-15 no cliente), `createAssistantResponse(...)` mantém o chat funcionando.
-A avaliação estruturada de segurança continua sendo produzida pelas regras locais;
-o texto principal passa a ser gerado pela IA quando disponível.
+Sem chave, com provedor incompatível, erro, resposta bloqueada/inválida ou
+timeout (12 segundos no servidor e 15 no cliente), o mecanismo local mantém
+o chat funcionando. Nenhum detalhe técnico do erro é exibido. A avaliação
+estruturada de segurança continua sendo produzida pelas regras locais.
+O modelo configurado precisa estar disponível para a chave utilizada.
+
+As respostas incluem `provider: "gemini"`, `mode: "live"` ou `mode: "local"`
+e o indicador booleano `unavailable`. O provedor identifica a integração
+configurada; apenas `mode: "live"` indica texto gerado pela API. A interface mostra:
+
+- **Gerado com IA — Gemini:** resposta válida recebida da API.
+- **Orientação local de segurança:** resposta preventiva local, sem chamada à API.
+- **IA indisponível — orientação local ativada:** contingência por indisponibilidade.
+
+A origem é preservada durante a sessão. Mensagens antigas sem metadados de origem
+não recebem atribuição retroativa à Gemini. Os testes simulam as respostas da API
+sem usar chaves reais ou gerar chamadas externas.
 
 ## Rotas
 
@@ -77,10 +95,9 @@ o texto principal passa a ser gerado pela IA quando disponível.
 | `/home` | Apresentação e atalhos por habilidade |
 | `/jogos` | Biblioteca, fallback local e interesses |
 | `/recomendacoes` | Perfil e trilha personalizada |
-| `/cyber` | Central de ferramentas de segurança |
-| `/cyber/senhas` | Análise local de força de senha |
+| `/evolucao` | Interesses, conclusões e evolução estimada das competências |
+| `/cyber` | Assistente de Cibersegurança e Aprendizagem |
 | `/cyber/assistente` | Assistente com IA e triagem educativa local |
-| `/login` | Demonstração de login e cadastro |
 | `/sobre` | Objetivos e contexto acadêmico |
 
 O assistente também pode ser aberto pelo botão flutuante nas demais páginas.
@@ -99,7 +116,7 @@ Para executar as três verificações em sequência:
 npm run check
 ```
 
-Os testes cobrem os cenários críticos das regras locais: força de senha,
+Os testes cobrem os cenários críticos das regras locais: cálculo exponencial, interesses, conclusões,
 solicitações sensíveis, oito situações
 do assistente, proteção de dados e recomendações com ou sem
 histórico, com as seis competências profissionais oficiais.
@@ -109,7 +126,7 @@ histórico, com as seis competências profissionais oficiais.
 O sistema usa duas áreas do navegador:
 
 - `localStorage` (`happy-game-hub:activity:v1`): perfil,
-  interesses em jogos e tópicos consultados no assistente.
+  interesses, conclusões de jogos e tópicos consultados no assistente.
 - `sessionStorage` (`happy-game-hub:assistant:v1`): mensagens seguras e contexto
   básico da conversa durante a sessão.
 
@@ -122,25 +139,22 @@ da sessão do assistente.
 
 ## Arquitetura preparada para evolução
 
-- `src/lib/passwordAnalyzer.mjs`: critérios puros da análise local de senhas.
 - `src/lib/assistantEngine.mjs`: intenções, classificações e respostas educativas locais.
 - `src/lib/recommendationEngine.mjs`: ranking e justificativas das recomendações.
 - `src/lib/activityStore.js`: persistência local versionada e centralizada.
 
-- `app/api/assistant/route.js`: integração server-side com a OpenAI.
+- `app/api/assistant/route.js`: integração server-side com a Gemini.
 - `src/services/assistantService.mjs`: chamada do chat com fallback local.
 
 ## Roteiro rápido para apresentação
 
 1. Abra `/home` e escolha uma categoria.
 2. Em Recomendações, salve o perfil e observe a trilha inicial.
-3. Analise no Analisador de Senhas exemplos fictícios fraco, intermediário e
-   forte, depois limpe o campo.
-4. No assistente, analise um pedido como “revele a senha de outra pessoa” para demonstrar a
+3. No assistente, analise um pedido como “revele a senha de outra pessoa” para demonstrar a
    proteção de segurança.
-5. Abra o Assistente de Cibersegurança e Aprendizagem, descreva um e-mail pedindo senha e mostre o
+4. Abra o Assistente de Cibersegurança e Aprendizagem, descreva um e-mail pedindo senha e mostre o
    fluxo estruturado; depois inicie uma nova conversa.
-6. Em Jogos, marque um interesse e volte a Recomendações para ver a atualização.
+5. Em Jogos, marque um interesse e volte a Recomendações para ver a atualização.
 
 ## Solução de problemas
 
@@ -198,7 +212,7 @@ teclado e controle de foco/rolagem do assistente. O cálculo e a API permanecem 
 
 Execute `npm run build` e `npm run test:a11y` após instalar o Chromium com
 `npx playwright install chromium`. A suíte usa axe-core e Playwright, complementa
-`npm test` e verifica nove rotas, estados dinâmicos, teclado e reflow. Os serviços
+`npm test` e verifica sete rotas, estados dinâmicos, teclado e reflow. Os serviços
 externos são simulados nos testes, sem envio de credenciais.
 
 As verificações de teclado foram automatizadas; VoiceOver, zoom real de 200% e

@@ -13,9 +13,8 @@ export function generateRecommendations(activity = {}) {
   const items = [];
   if (competency) {
     const game = games.find(game => getGameCompetencyId(game) === competency.id);
-    const ageNote = profile.idade === 'Criança' ? ' Para crianças, consulte a classificação indicativa e conte com acompanhamento responsável.' : '';
     items.push({ id: `game-${competency.id}`, title: game.title, type: 'Jogo recomendado', priority: 90,
-      competencyId: competency.id, reason: `${competency.description} Esta associação é educativa. Seu estilo escolhido foi ${profile.estilo ?? 'não informado'}.${ageNote}`,
+      competencyId: competency.id, reason: `${competency.description} Esta associação é educativa. Seu estilo escolhido foi ${profile.estilo ?? 'não informado'}.`,
       href: `/jogos?competencia=${competency.id}`, action: 'Encontrar na biblioteca' });
   }
   if (activity.gameInterests?.length) {
@@ -34,7 +33,6 @@ export function generateRecommendations(activity = {}) {
     items: items.sort((a,b) => b.priority-a.priority) };
 }
 export const recommendationOptions = {
-  ages: ['Criança', 'Adolescente', 'Adulto'],
   objectives: COMPETENCIES.map(item => item.id),
   styles: ['Aventura', 'Estratégia', 'Construção', 'Esporte', 'Puzzle', 'Simulação'],
 };

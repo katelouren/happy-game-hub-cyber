@@ -1,3 +1,4 @@
+import { COMPETENCIES } from "@/lib/competencies.mjs";
 import { Brain, ShieldCheck, Sparkles, Gamepad2 } from "lucide-react";
 
 export default function Sobre() {
@@ -32,9 +33,8 @@ export default function Sobre() {
             </h2>
 
             <p className="text-slate-300 leading-relaxed">
-              Jogos e atividades oferecem oportunidades de prática de atenção,
-              memória, raciocínio lógico, criatividade, resolução de problemas
-              e tomada de decisão.
+              Jogos e atividades oferecem oportunidades de prática das seis competências oficiais:
+              {" "}{COMPETENCIES.map(competency => competency.label).join("; ")}.
             </p>
           </div>
 

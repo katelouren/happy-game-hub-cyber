@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -84,14 +84,6 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <Link
-              href="/login"
-              aria-current={pathname === "/login" ? "page" : undefined}
-              className="flex items-center gap-2 rounded-xl border border-lime-400 px-5 py-3 text-base font-semibold tracking-wide text-lime-400 transition-colors hover:bg-lime-400 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
-            >
-              <User aria-hidden="true" size={18} />
-              Login
-            </Link>
           </div>
 
           <button
@@ -132,15 +124,6 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <Link
-              href="/login"
-              onClick={() => setMenuAberto(false)}
-              aria-current={pathname === "/login" ? "page" : undefined}
-              className="mt-2 flex items-center justify-center gap-2 rounded-xl border border-lime-400 px-6 py-3 text-base font-semibold tracking-wide text-lime-400 transition-colors hover:bg-lime-400 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
-            >
-              <User aria-hidden="true" size={18} />
-              Login
-            </Link>
           </div>
         )}
       </nav>

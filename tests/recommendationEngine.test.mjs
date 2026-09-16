@@ -13,7 +13,6 @@ test("oferece início útil quando ainda não há histórico", () => {
 test("prioriza o perfil e ignora avaliações antigas da funcionalidade removida", () => {
   const result = generateRecommendations({
     profile: {
-      idade: "Adolescente",
       objetivo: "Raciocínio",
       estilo: "Puzzle",
     },
@@ -30,7 +29,6 @@ test("prioriza o perfil e ignora avaliações antigas da funcionalidade removida
 test("preserva interesses sem duplicar itens ao receber dados antigos", () => {
   const result = generateRecommendations({
     profile: {
-      idade: "Adulto",
       objetivo: "Estratégia",
       estilo: "Estratégia",
     },
@@ -52,13 +50,12 @@ test("objetivo incompatível pede nova seleção sem inventar desafio", () => {
   assert.doesNotMatch(JSON.stringify(result), /Desafio Cyber/);
 });
 
-test("considera idade, objetivo e estilo sem rotas ou temas contraditórios", () => {
+test("considera objetivo e estilo sem rotas ou temas contraditórios", () => {
   const profiles = [
-    { idade: "Criança", objetivo: "Criatividade", estilo: "Construção" },
-    { idade: "Adolescente", objetivo: "Raciocínio", estilo: "Puzzle" },
-    { idade: "Adulto", objetivo: "Estratégia", estilo: "Estratégia" },
+    { objetivo: "Criatividade", estilo: "Construção" },
+    { objetivo: "Raciocínio", estilo: "Puzzle" },
+    { objetivo: "Estratégia", estilo: "Estratégia" },
     {
-      idade: "Adolescente",
       objetivo: "Segurança Digital",
       estilo: "Puzzle",
     },
@@ -87,17 +84,18 @@ test("considera idade, objetivo e estilo sem rotas ou temas contraditórios", ()
     );
   }
 
-  const childResult = generateRecommendations({
-    profile: profiles[0],
-    promptAnalyses: [],
-    gameInterests: [],
-    assistantInteractions: [],
-  });
-  assert.match(childResult.items[0].reason, /acompanhamento responsável/i);
 });
 
 test("histórico exclusivo de avaliações antigas retorna atividades atuais", () => {
   const result = generateRecommendations({ promptAnalyses: [{ score: 30, risk: "Alto" }] });
   assert.equal(result.personalized, false);
   assert.ok(result.items.every((item) => ["#perfil-jogador", "/jogos", "/cyber/assistente"].includes(item.href)));
+});
+
+test('idade legada não altera recomendações nem justificativas', () => {
+  const profile = { objetivo: 'Criatividade', estilo: 'Construção' };
+  const expected = generateRecommendations({ profile });
+  for (const idade of ['Criança', 'Adolescente', 'Adulto']) {
+    assert.deepEqual(generateRecommendations({ profile: { ...profile, idade } }), expected);
+  }
 });

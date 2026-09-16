@@ -8,7 +8,7 @@ const features = [
   {
     icon: Target,
     title: "Treinamento cognitivo",
-    description: "Jogos e desafios para estimular atenção, memória, raciocínio e tomada de decisão.",
+    description: "Jogos e desafios para praticar as seis competências oficiais apresentadas abaixo.",
   },
   {
     icon: Brain,

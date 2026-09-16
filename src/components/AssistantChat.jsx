@@ -55,6 +55,7 @@ const WELCOME_MESSAGE = {
   id: "assistant-welcome",
   role: "assistant",
   content: ASSISTANT_WELCOME,
+  origin: { provider: "gemini", mode: "local", unavailable: false },
 };
 
 function sanitizeText(value, maxLength = 2000) {
@@ -106,6 +107,22 @@ function normalizeAssessment(value) {
   return Object.keys(assessment).length > 0 ? assessment : null;
 }
 
+function normalizeOrigin(value) {
+  if (value?.provider !== "gemini" || !["live", "local"].includes(value.mode)) return null;
+  return {
+    provider: "gemini",
+    mode: value.mode,
+    unavailable: value.mode === "local" && value.unavailable === true,
+  };
+}
+
+function originLabel(origin) {
+  if (origin.mode === "live") return "Gerado com IA — Gemini";
+  return origin.unavailable
+    ? "IA indisponível — orientação local ativada"
+    : "Orientação local de segurança";
+}
+
 function serializeMessage(message) {
   const content = sanitizeText(message.content);
   if (!content) return null;
@@ -117,6 +134,8 @@ function serializeMessage(message) {
       : null;
 
   if (metadata) serialized.metadata = metadata;
+  const origin = message.role === "assistant" ? normalizeOrigin(message.origin) : null;
+  if (origin) serialized.origin = origin;
   return serialized;
 }
 
@@ -353,7 +372,7 @@ export default function AssistantChat({
       const response =
         safeInput === input
           ? await responseProvider(input, context)
-          : createAssistantResponse(input, context);
+          : { ...createAssistantResponse(input, context), provider: "gemini", mode: "local", unavailable: false };
 
       if (requestGeneration.current !== currentRequest) return;
 
@@ -371,6 +390,7 @@ export default function AssistantChat({
           role: "assistant",
           content: safeAnswer,
           metadata: normalizeAssessment(response),
+          origin: normalizeOrigin(response),
         },
       ]);
       setContext(normalizeContext(response.context ?? context));
@@ -488,6 +508,11 @@ export default function AssistantChat({
                 <span className="sr-only">
                   {isAssistant ? "Assistente: " : "Você: "}
                 </span>
+                {isAssistant && message.origin && (
+                  <p className="mb-2 text-xs font-semibold text-slate-400">
+                    {originLabel(message.origin)}
+                  </p>
+                )}
                 <p>{message.content}</p>
                 {isAssistant && (
                   <SecurityAssessment metadata={message.metadata} />

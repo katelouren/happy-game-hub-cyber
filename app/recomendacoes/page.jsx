@@ -30,7 +30,6 @@ function priorityLabel(priority) {
 
 export default function Recomendacoes() {
   const { activity, isHydrated, clearActivity } = useActivity();
-  const [idade, setIdade] = useState("Adulto");
   const [objetivo, setObjetivo] = useState(COMPETENCIES[0].id);
   const [estilo, setEstilo] = useState("Construção");
   const [formStatus, setFormStatus] = useState("idle");
@@ -54,7 +53,6 @@ export default function Recomendacoes() {
       );
 
       if (savedProfile) {
-        setIdade("Adulto");
         setObjetivo(hasQueryObjective ? queryObjective : savedProfile.objetivo ?? "");
         if (!hasQueryObjective && !savedProfile.objetivo) setFeedback("Escolha uma das seis competências para atualizar seu perfil. Seus interesses e conclusões foram preservados.");
         setEstilo(savedProfile.estilo);
@@ -78,17 +76,14 @@ export default function Recomendacoes() {
   }, [activity.profile, isHydrated]);
 
   const result = useMemo(
-    () => generateRecommendations({
-      ...activity,
-      profile: activity.profile ? { ...activity.profile, idade: "Adulto" } : null,
-    }),
+    () => generateRecommendations(activity),
     [activity],
   );
 
   async function handleSubmit(event) {
     event.preventDefault();
     const requestId = profileRequest.current + 1;
-    const nextProfile = { idade, objetivo, estilo };
+    const nextProfile = { objetivo, estilo };
     profileRequest.current = requestId;
     setFormStatus("loading");
     setFeedback("");
@@ -157,23 +152,6 @@ export default function Recomendacoes() {
               <UserRound aria-hidden="true" className="text-lime-400" />
               Meu perfil de desenvolvimento
             </h2>
-
-            <label htmlFor="idade" className="mb-5 block">
-              <span className="mb-2 block font-semibold text-slate-200">
-                Faixa etária
-              </span>
-              <select
-                id="idade"
-                value={idade}
-                disabled={formStatus === "loading"}
-                onChange={handleFieldChange(setIdade)}
-                className="w-full rounded-xl border border-slate-700 bg-[#020817] p-4 text-slate-200 outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20"
-              >
-                {recommendationOptions.ages.filter((age) => age === "Adulto").map((age) => (
-                  <option key={age}>{age}</option>
-                ))}
-              </select>
-            </label>
 
             <label htmlFor="objetivo" className="mb-5 block">
               <span className="mb-2 block font-semibold text-slate-200">

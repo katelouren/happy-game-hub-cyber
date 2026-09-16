@@ -109,7 +109,7 @@ const INTENTS = [
 
 const RESPONSES = {
   platform:
-    "O Happy Game Hub reúne jogos, recomendações e ferramentas educativas de cibersegurança. Use o menu principal para visitar cada área; na seção Cyber você encontra análise de senhas e este assistente.",
+    "O Happy Game Hub reúne jogos, recomendações e ferramentas educativas de cibersegurança. Use o menu principal para visitar cada área; na seção Cyber você encontra o Assistente de Cibersegurança e Aprendizagem.",
   games:
     `Na área Jogos você pode explorar experiências relacionadas a ${COMPETENCIES.map(item => item.label).join(", ")}. Use Recomendações para escolher uma competência. Os indicadores são estimativas de interações; cibersegurança é tema do produto, não competência calculada.`,
   prompts:
@@ -513,7 +513,6 @@ export function createAssistantResponse(message, context = {}) {
  * Sugestões adequadas à página atual, usadas pelo launcher e pela página completa.
  */
 export function getQuickPrompts(pathname = "/") {
-  if (pathname.startsWith("/cyber/senhas")) return TOPIC_SUGGESTIONS.passwords;
   if (pathname.startsWith("/cyber/assistente")) return TOPIC_SUGGESTIONS.cyber;
   if (pathname.startsWith("/cyber")) return TOPIC_SUGGESTIONS.cyber;
   if (pathname.startsWith("/jogos")) return TOPIC_SUGGESTIONS.games;

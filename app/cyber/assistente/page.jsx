@@ -87,13 +87,6 @@ export default function AssistentePage() {
               <h2 className="text-lg font-bold">Continue aprendendo</h2>
               <div className="mt-4 space-y-3">
                 <Link
-                  href="/cyber/senhas"
-                  className="flex items-center justify-between gap-3 rounded-lg text-sm font-bold text-lime-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
-                >
-                  Praticar segurança de senhas
-                  <ArrowRight aria-hidden="true" size={16} />
-                </Link>
-                <Link
                   href="/recomendacoes"
                   className="flex items-center justify-between gap-3 rounded-lg text-sm font-bold text-lime-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-400"
                 >
