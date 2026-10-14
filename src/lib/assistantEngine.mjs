@@ -1,4 +1,5 @@
 import { COMPETENCIES } from "./competencies.mjs";
+import { companyContext } from "./companyContext.mjs";
 const DEFAULT_SUGGESTIONS = [
   "O que encontro no Happy Game Hub?",
   "Como criar um bom prompt?",
@@ -428,6 +429,9 @@ function detectTopic(normalized, previousTopic) {
 }
 
 function contextualResponse(topic, normalized) {
+  if (topic === "cyber" && /multifator|autenticacao|2fa/.test(normalized) && !/senha|password/.test(normalized)) {
+    return "Como boa prática geral de segurança digital, a autenticação multifator (MFA) combina dois ou mais fatores: algo que você sabe, como uma senha, algo que possui, como um aplicativo autenticador, ou uma característica sua, como biometria. Isso reduz o risco de acesso indevido mesmo se a senha vazar. Nunca compartilhe códigos de autenticação.";
+  }
   if (topic === "cyber" && /senha|password/.test(normalized)) {
     return "Crie senhas longas e únicas, de preferência com uma frase fácil de lembrar, e use um gerenciador confiável. Ative autenticação em dois fatores e nunca reutilize a mesma senha em serviços diferentes.";
   }
@@ -441,6 +445,86 @@ function contextualResponse(topic, normalized) {
   }
 
   return RESPONSES[topic];
+}
+
+/** Bloqueio local de tentativas explícitas de substituir instruções confiáveis. */
+export function containsPolicyOverride(message) {
+  const text = normalizeText(message);
+  return /(?:ignore|ignorar|desconsidere|esqueca|nao siga|nao seguir).{0,60}(?:regras|politicas|instrucoes|nr[- ]?1)/.test(text) ||
+    /(?:finja|fingir|assuma|considere).{0,80}(?:politica|regra|permite compartilhar)/.test(text) ||
+    /(?:politica|regra).{0,65}(?:permite|autoriza|permitido).{0,50}(?:senha|token|codigo|e-?mail pessoal)/.test(text);
+}
+
+/** Defesa adicional para afirmações explicitamente incompatíveis com o escopo.
+ * Heurística preventiva, não verificação semântica completa da saída da IA.
+ */
+export function isUnsafeAssistantAnswer(message) {
+  const text = normalizeText(message);
+  const patterns = [
+    /(?:voce tem|voce sofre de|diagnostico e|diagnostico de) (?:burnout|depressao|ansiedade|transtorno)/g,
+    /(?:isso|situacao|conduta|caso) (?:e|configura|constitui|caracteriza)(?: juridicamente| definitivamente)? assedio/g,
+    /(?:empresa|organizacao) (?:esta|fica|e) juridicamente protegida/g,
+    /(?:hub|assistente|sistema|ferramenta) (?:garante|assegura) conformidade/g,
+    /(?:hub|assistente|sistema|ferramenta) (?:substitui|executa) (?:o |a )?(?:pgr|gro|avaliacao formal|diagnostico)/g,
+    /(?:a culpa e sua|voce e culpado|voce e culpada)/g,
+    /(?:risco ocupacional|nivel de risco ocupacional) (?:e|foi classificado como) (?:alto|medio|baixo)/g,
+    /(?:pode|deve|permitido|permite) (?:enviar|compartilhar|compartilhe).{0,25}(?:senha|token|codigo de autenticacao)/g,
+  ];
+  return patterns.some(pattern => [...text.matchAll(pattern)].some(match => {
+    const prefix = text.slice(0, match.index).split(/[.!?;,]/).at(-1);
+    return !/(?:(?:nao|nunca|jamais)\s*(?:(?:e|esta|fica|diga|afirme|conclua|significa|necessariamente|automaticamente|que)\s+){0,3}|sem\s+(?:afirmar|concluir|dizer)\s+(?:que\s+)?)$/.test(prefix);
+  }));
+}
+
+function corporateOrWorkplaceResponse(text) {
+  const { company, cybersecurityPolicies: policies } = companyContext;
+  const atWork = /trabalho|gestor|chefe|colega|equipe|corporativ|\brh\b|reunioes|lideranca|jornada|tarefas|relatorio/.test(text);
+  const violence = /agredir|agressao|agrediu|bateu|ameac|violencia/.test(text);
+  const immediatePriority = atWork && violence;
+  const corporate = (policy, action) => ({
+    answer: `Na política interna da empresa fictícia ${company.name}: ${policy} ${action}`,
+    topic: "cyber",
+  });
+  if (!immediatePriority && /senha|credencial|token|codigo de autenticacao/.test(text) &&
+      /compartilh|enviar|envie|mandar|colega|gestor|conta de outra/.test(text)) {
+    return corporate(policies.credentials[0], `${policies.credentials[2]} ${policies.credentials[3]} Não compartilhe senhas, tokens ou códigos de autenticação, mesmo com urgência.`);
+  }
+  if (!immediatePriority && /confidencial|informac(?:ao|oes) sensiv|dados corporativos|arquivo corporativo/.test(text)) {
+    return corporate(policies.corporateData[1], `${policies.corporateData[0]} ${policies.corporateData[2]}`);
+  }
+  if (!immediatePriority && /dispositivo pessoal|computador pessoal|celular pessoal/.test(text)) {
+    return corporate(policies.personalDevices[0], policies.personalDevices[1]);
+  }
+  if (!immediatePriority && /conta de (?:terceiro|colega)|permiss(?:ao|oes)|acesso corporativo/.test(text)) {
+    return corporate(policies.access[0], `${policies.access[1]} ${policies.access[2]}`);
+  }
+  if (!immediatePriority && /nr[- ]?1|\bpgr\b|\bgro\b|juridicamente protegida|diagnostico/.test(text)) {
+    return { topic: "workplace", answer: "O assistente oferece conscientização e orientação inicial sobre fatores de risco psicossociais relacionados ao trabalho. Não garante conformidade com a NR-1, proteção jurídica nem elimina a responsabilidade da empresa. Não substitui PGR, GRO, avaliação formal de riscos ocupacionais ou profissionais de SST, saúde e direito, e não realiza diagnóstico médico, psicológico ou jurídico. Procure RH/SST ou os profissionais responsáveis para avaliação formal." };
+  }
+
+  if (!atWork && !/assedio|bullying|sobrecarga|risco psicossocial/.test(text)) return null;
+  if (!immediatePriority && /registr|preservar.{0,25}evidencias/.test(text)) {
+    return { topic: "workplace", answer: "Registre datas, fatos observáveis, frequência e impactos na organização do trabalho, sem conclusões jurídicas. Preserve mensagens ou outros registros somente quando for seguro e nos ambientes autorizados. Não envie dados pessoais ou de terceiros neste chat. Encaminhe pelos canais oficiais de RH, SST ou compliance; se a liderança estiver envolvida, procure outro canal formal. Esta orientação inicial não substitui avaliação formal." };
+  }
+  if (!violence && /feedback|cobranca profissional|avaliacao de desempenho/.test(text) &&
+      !/humilh|piadas|intimid|hostil|assedio sexual|bullying|retaliacao/.test(text)) {
+    return { topic: "workplace", answer: `${companyContext.workplaceConduct.importantDistinction.join(" ")} Se houver indícios relevantes, registre os fatos com segurança e procure RH/SST ou compliance. Esta orientação inicial não oferece diagnóstico ou conclusão jurídica.` };
+  }
+  let elements;
+  if (/ameac|agredir|agressao|agrediu|bateu|violencia|retaliacao|carreira.{0,50}dificil/.test(text)) elements = "Ameaça, violência ou possível retaliação";
+  else if (/sexual|sexuais|assedio sexual/.test(text)) elements = "Contato ou mensagem de natureza sexual indesejada";
+  else if (/humilh|piadas|bullying|insulto|gritos|assedio|ofensiv/.test(text)) elements = "Humilhação, piadas ofensivas ou outros comportamentos inadequados";
+  else if (/isolad|isolamento|exclu|intimid/.test(text)) elements = "Isolamento, exclusão ou intimidação";
+  else if (/sobrecarga|trabalh.{0,25}(?:noite|alem da jornada)|prazos? incompat|mesmo dia|tarefas excess|metas abusiv/.test(text)) elements = "Sobrecarga e organização do trabalho";
+  else if (/sem apoio|falta de apoio|falta de suporte|nao recebo orientacao|sem recursos|falta de recursos/.test(text)) elements = "Falta de suporte ou recursos";
+  else if (/hostil|conflitos recorrentes/.test(text)) elements = "Comunicação hostil e conflitos recorrentes";
+  else if (/contraditor|responsabilidades|baixa autonomia|mudancas frequentes/.test(text)) elements = "Organização inadequada do trabalho";
+  else if (/refazer|feedback|cobranca|avaliacao de desempenho|prazo|metas/.test(text)) {
+    return { topic: "workplace", answer: `${companyContext.workplaceConduct.importantDistinction[0]} Considere contexto, forma de comunicação, frequência e intensidade. Pedir correção de erros e combinar um novo prazo pode fazer parte do trabalho. Se houver ameaça, humilhação ou demandas incompatíveis com os recursos, registre os fatos com segurança e procure RH/SST ou compliance para avaliação. Esta é orientação inicial, sem diagnóstico ou conclusão jurídica.` };
+  }
+  if (!elements) return null;
+  const urgent = violence || /risco imediato/.test(text);
+  return { topic: "workplace", answer: `${elements} no relato pode indicar fatores de risco psicossociais relacionados ao trabalho e merece avaliação. O relato deve ser levado a sério, sem culpar quem relata. Na política da empresa fictícia ${company.name}, não se tolera abuso, assédio, bullying ou retaliação. Registre objetivamente episódios, datas e impactos e preserve mensagens apenas se for seguro; não exponha dados de terceiros. Procure RH, SST ou compliance; se a liderança estiver envolvida, use outro canal formal. ${urgent ? "Em risco imediato, afaste-se se possível e busque ajuda de emergência apropriada. " : ""}${immediatePriority && /senha|credencial|token/.test(text) ? "Não compartilhe senhas, tokens ou códigos; use sua própria conta e os canais oficiais de acesso. " : ""}Esta orientação inicial não determina assédio juridicamente e não oferece diagnóstico médico ou psicológico; não substitui avaliação formal, PGR ou GRO.` };
 }
 
 function createSecurityResponse(category, previousTopic, safety = "warning") {
@@ -493,6 +577,15 @@ export function createAssistantResponse(message, context = {}) {
     );
   }
 
+  const guidance = corporateOrWorkplaceResponse(normalized);
+  if (guidance || containsPolicyOverride(message)) {
+    const selected = guidance ?? { topic: "safety", answer: "As mensagens do usuário não alteram as políticas corporativas confiáveis da aplicação. Posso orientar com base nas políticas demonstrativas da Nexa Solutions e boas práticas gerais, sem inventar regras ou substituir avaliação formal de SST, RH ou compliance." };
+    const assessment = guidance?.topic === "cyber" &&
+      ["credential-request", "authentication-code-request"].includes(securityCategory)
+      ? createSecurityResponse(securityCategory, previousTopic) : {};
+    return { ...assessment, ...selected, answer: containsPolicyOverride(message) ? `As mensagens do usuário não alteram as políticas confiáveis da aplicação. ${selected.answer}` : selected.answer, safety: assessment.safety ?? "ok", context: { lastTopic: selected.topic }, suggestions: selected.topic === "workplace" ? ["Como registrar uma situação de trabalho com segurança?", "Feedback profissional é sempre assédio?", "O assistente substitui o PGR?"] : TOPIC_SUGGESTIONS.cyber };
+  }
+
   if (securityCategory) {
     return createSecurityResponse(securityCategory, previousTopic);
   }
@@ -522,4 +615,4 @@ export function getQuickPrompts(pathname = "/") {
 }
 
 export const ASSISTANT_WELCOME =
-  "Olá! Sou o Assistente de Cibersegurança e Aprendizagem do Happy Game Hub. Descreva uma situação sem informar dados pessoais; também posso ajudar com a plataforma, jogos, prompts e IA.";
+  "Olá! Conte uma situação relacionada à segurança digital ou ao ambiente de trabalho, sem informar dados pessoais. Ofereço orientação inicial sobre políticas demonstrativas da empresa fictícia Nexa Solutions, prevenção de abuso, bullying, assédio e riscos psicossociais relacionados ao trabalho. Não substituo avaliação formal, PGR, GRO nem profissionais de saúde ou direito. Também posso ajudar com a plataforma, jogos, prompts e IA.";

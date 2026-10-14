@@ -200,3 +200,25 @@ test('perfil sem faixa etária migra dados antigos e salva competência e estilo
  await expect(form.getByRole('combobox').nth(1)).toHaveValue('Puzzle');
  await audit(page);
 });
+
+test('orientação de trabalho por teclado preserva contexto e acessibilidade em contingência', async ({page}) => {
+ await page.goto('/cyber/assistente');
+ await expect(page.locator('main')).toContainText('empresa fictícia Nexa');
+ await expect(page.locator('main')).toContainText('não oferece diagnóstico');
+ await page.route('**/api/assistant', route => route.fulfill({status:503, json:{error:'indisponível'}}));
+ const input = page.getByRole('textbox', {name:/Escreva sua pergunta/});
+ await tabTo(page,input);
+ await input.fill('Meu chefe me humilha toda semana no trabalho.');
+ await input.press('Enter');
+ const last = page.getByRole('log').locator('article').last();
+ await expect(last).toContainText('fatores de risco psicossociais relacionados ao trabalho');
+ await expect(last).toContainText('RH, SST ou compliance');
+ await expect(last).toContainText('IA indisponível — orientação local ativada');
+ await expect(input).toBeFocused();
+ await expect(last.getByText('Classificação', {exact:true})).toHaveCount(0);
+ await page.reload();
+ await expect(page.getByRole('log')).toContainText('fatores de risco psicossociais relacionados ao trabalho');
+ const stored = await page.evaluate(() => JSON.parse(sessionStorage.getItem('happy-game-hub:assistant:v1')));
+ expect(stored.context.lastTopic).toBe('workplace');
+ await audit(page);
+});

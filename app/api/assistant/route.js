@@ -1,11 +1,15 @@
 import { COMPETENCY_INSTRUCTIONS } from "../../../src/lib/competencies.mjs";
 import {
   containsSensitiveContent,
+  containsPolicyOverride,
+  isUnsafeAssistantAnswer,
   createAssistantResponse,
   getSafeUserMessage,
 } from "../../../src/lib/assistantEngine.mjs";
 
-const TOPICS = new Set(["platform", "games", "prompts", "ai", "cyber", "safety", "unknown"]);
+import { COMPANY_INSTRUCTIONS } from "../../../src/lib/companyContext.mjs";
+
+const TOPICS = new Set(["platform", "games", "prompts", "ai", "cyber", "safety", "workplace", "unknown"]);
 const INSTRUCTIONS = `Você é o assistente educacional do Happy Game Hub, uma plataforma gamificada de aprendizado, jogos, inteligência artificial e conscientização em cibersegurança.
 Responda em português do Brasil, de forma clara, educativa e objetiva, em até 150 palavras.
 Ajude com o uso do Happy Game Hub, escolha e compreensão de jogos, inteligência artificial, criação de prompts e boas práticas de segurança digital: golpes, phishing, senhas, autenticação, links suspeitos e privacidade.
@@ -37,7 +41,7 @@ export async function POST(request) {
     mode: "local",
     unavailable,
   });
-  if (containsSensitiveContent(message)) return local();
+  if (containsSensitiveContent(message) || containsPolicyOverride(message)) return local();
 
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   const provider = process.env.AI_PROVIDER?.trim() || "gemini";
@@ -53,7 +57,7 @@ export async function POST(request) {
       },
       body: JSON.stringify({
         systemInstruction: {
-          parts: [{ text: `${INSTRUCTIONS}\n${COMPETENCY_INSTRUCTIONS}\nTópico de contexto: ${context.lastTopic ?? "não definido"}.` }],
+          parts: [{ text: `${INSTRUCTIONS}\n${COMPETENCY_INSTRUCTIONS}\n${COMPANY_INSTRUCTIONS}\nTópico de contexto: ${context.lastTopic ?? "não definido"}.` }],
         },
         contents: [{ role: "user", parts: [{ text: message }] }],
         generationConfig: { maxOutputTokens: 2048 },
@@ -71,7 +75,7 @@ export async function POST(request) {
       .map((part) => part.text)
       .join("\n")
       .trim();
-    if (!answer || containsSensitiveContent(answer) || answer.includes(apiKey)) return local(true);
+    if (!answer || containsSensitiveContent(answer) || isUnsafeAssistantAnswer(answer) || answer.includes(apiKey)) return local(true);
 
     return json({ answer: getSafeUserMessage(answer).slice(0, 2000), provider: "gemini", mode: "live", unavailable: false });
   } catch {

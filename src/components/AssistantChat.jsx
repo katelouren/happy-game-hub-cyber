@@ -29,6 +29,7 @@ const ALLOWED_TOPICS = new Set([
   "ai",
   "cyber",
   "safety",
+  "workplace",
   "unknown",
 ]);
 const RISK_LEVELS = new Set(["Baixo", "Médio", "Alto"]);
@@ -626,7 +627,8 @@ export default function AssistantChat({
             </button>
           </div>
           <p id="assistant-help" className="mt-2 text-xs leading-relaxed text-slate-500">
-            Não compartilhe senhas, documentos, tokens ou dados pessoais. Enter envia;
+            Orientação inicial sobre segurança digital e ambiente de trabalho, sem diagnóstico
+            ou avaliação oficial. Não compartilhe senhas, documentos, tokens ou dados pessoais. Enter envia;
             Shift + Enter cria uma nova linha.
           </p>
         </form>

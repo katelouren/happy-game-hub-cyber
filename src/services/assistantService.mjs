@@ -1,5 +1,7 @@
 import {
   containsSensitiveContent,
+  containsPolicyOverride,
+  isUnsafeAssistantAnswer,
   createAssistantResponse,
   getSafeUserMessage,
 } from "../lib/assistantEngine.mjs";
@@ -7,7 +9,7 @@ import {
 export async function requestAssistantResponse(message, context = {}) {
   const local = { ...createAssistantResponse(message, context), provider: "gemini", mode: "local", unavailable: false };
   const fallback = { ...local, unavailable: true };
-  if (!message.trim() || message.length > 600 || containsSensitiveContent(message)) {
+  if (!message.trim() || message.length > 600 || containsSensitiveContent(message) || containsPolicyOverride(message)) {
     return local;
   }
 
@@ -23,7 +25,7 @@ export async function requestAssistantResponse(message, context = {}) {
     const data = await response.json();
     if (typeof data?.answer !== "string" || !data.answer.trim() ||
         data.provider !== "gemini" || !["live", "local"].includes(data.mode) ||
-        containsSensitiveContent(data.answer)) return fallback;
+        containsSensitiveContent(data.answer) || isUnsafeAssistantAnswer(data.answer)) return fallback;
     return {
       ...local,
       answer: getSafeUserMessage(data.answer).slice(0, 2000),

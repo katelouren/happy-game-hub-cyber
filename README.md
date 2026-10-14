@@ -63,7 +63,7 @@ que não contém segredos.
 O navegador chama apenas `POST /api/assistant`. O servidor chama
 [`generateContent` da Gemini Developer API](https://ai.google.dev/api/generate-content)
 com `fetch` e a chave no cabeçalho `x-goog-api-key`. Envia somente a pergunta
-atual (até 600 caracteres), instruções educativas e um tópico validado;
+atual (até 600 caracteres), instruções educativas, contexto corporativo demonstrativo e um tópico validado;
 não envia histórico, perfil, interesses ou conclusões de jogos.
 As regras existentes bloqueiam conteúdo sensível no cliente e novamente no
 servidor, respondendo localmente sem chamada externa. Essas regras são uma
@@ -87,6 +87,65 @@ configurada; apenas `mode: "live"` indica texto gerado pela API. A interface mos
 A origem é preservada durante a sessão. Mensagens antigas sem metadados de origem
 não recebem atribuição retroativa à Gemini. Os testes simulam as respostas da API
 sem usar chaves reais ou gerar chamadas externas.
+
+## Fase 6 — contexto corporativo e ambiente de trabalho
+
+O assistente usa políticas demonstrativas da empresa fictícia **Nexa Solutions**.
+`src/lib/companyContext.mjs` reúne princípios de segurança, credenciais, dados,
+dispositivos, acessos, conduta no trabalho, fatores psicossociais, procedimentos
+iniciais e limites de atuação. Esses dados são controlados pela aplicação.
+
+No servidor, as instruções educativas e o contexto corporativo são enviados em
+`systemInstruction`; a pergunta permanece separada em `contents` com papel `user`.
+Somente `lastTopic` validado é aceito como contexto do navegador. Políticas,
+histórico e demais campos do corpo da requisição não são incorporados à instrução
+confiável. A mensagem é dado não confiável e não autoriza alterar políticas.
+Tentativas explícitas de sobrescrita recebem orientação local tanto no cliente
+quanto no servidor. O filtro de saída substitui afirmações explicitamente
+incompatíveis com as políticas ou limites do assistente pelo fallback local.
+
+O mecanismo local também aplica políticas pertinentes sobre credenciais e dados
+e orienta sobre sobrecarga, falta de suporte, organização do trabalho,
+humilhação, piadas ofensivas, bullying, contato sexual indesejado, isolamento,
+intimidação, comunicação hostil, ameaças e possível retaliação. Recomenda registro
+objetivo, preservação segura de evidências e canais de RH, SST ou compliance,
+conforme o caso; risco imediato exige prioridade de proteção e ajuda adequada.
+Feedback ou cobrança profissional não são automaticamente classificados como
+assédio. Relatos de trabalho não recebem classificação jurídica nem nível de
+risco ocupacional. A triagem digital existente permanece separada.
+
+O Happy Game Hub oferece **conscientização e orientação inicial**: não realiza
+diagnóstico médico, psicológico ou jurídico, avaliação formal de riscos,
+substituição de PGR/GRO, garantia de conformidade com NR-1 ou proteção jurídica
+para a empresa. A abordagem de fatores relacionados à organização do trabalho
+segue o escopo educativo das [orientações oficiais de NR-1 do MTE](https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/nr-1).
+A separação de instruções utiliza o contrato de
+[`generateContent` da Gemini](https://ai.google.dev/api/generate-content).
+
+As detecções locais de dados, sobrescrita e saída inadequada são heurísticas:
+podem ter falsos positivos ou deixar passar formulações não previstas. A
+separação de instruções reduz riscos, mas não garante resistência absoluta a
+prompt injection nem respostas corretas do modelo. Os testes da Gemini usam
+respostas simuladas; não avaliam semanticamente uma chamada real. As políticas
+são fictícias e os canais não possuem contatos reais cadastrados.
+
+### Revisão manual da Fase 6
+
+Na página `/cyber/assistente`, confira os seguintes relatos com IA disponível e
+em contingência (sem chave ou com falha simulada):
+
+| Cenário | Pergunta | Resultado a conferir |
+| --- | --- | --- |
+| A — credenciais | Estou em reunião e um colega precisa acessar um sistema com urgência. Posso enviar minha senha para ele pelo WhatsApp? | Não compartilhar; política de credenciais, acesso individual e canal oficial. |
+| B — dados | Preciso terminar uma planilha confidencial em casa. Posso mandar para meu e-mail pessoal? | Política de dados e ambiente corporativo autorizado. |
+| C — MFA | O que é autenticação multifator? | Explicação geral sem políticas irrelevantes. |
+| D — sobrecarga | Meu gestor me entrega toda semana tarefas que normalmente levariam dois dias e exige que eu finalize no mesmo dia. Tenho trabalhado à noite para conseguir cumprir. Isso é normal? | Possível fator psicossocial do trabalho, registro e RH/SST, sem diagnóstico. |
+| E — humilhação | Meu chefe costuma fazer piadas sobre mim nas reuniões e todos riem. Já pedi para ele parar, mas ele continua e diz que eu sou sensível demais. | Levar a sério, preservar registros e usar canais formais, sem determinar assédio. |
+| F — feedback | Meu gestor pediu para eu refazer um relatório porque havia erros e me deu um novo prazo. | Não classificar automaticamente como assédio; considerar contexto, forma, frequência e intensidade. |
+| G — retaliação | Depois que relatei um problema ao RH, meu gestor começou a me excluir de reuniões e disse que minha carreira na empresa iria ficar difícil. | Possível retaliação, registros e canais adequados, sem conclusão jurídica. |
+
+Os cenários A–G são cobertos por testes determinísticos do fallback. A validação
+em IA real continua sujeita ao modelo e exige uma chave configurada no servidor.
 
 ## Rotas
 

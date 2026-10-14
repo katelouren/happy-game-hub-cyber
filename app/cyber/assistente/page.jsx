@@ -11,7 +11,7 @@ import AssistantChat from "@/components/AssistantChat";
 export const metadata = {
   title: "Assistente de Cibersegurança e Aprendizagem",
   description:
-    "Assistente educativo com IA para apoiar a aprendizagem e orientar comportamentos digitais mais seguros.",
+    "Orientação inicial sobre segurança digital, políticas corporativas demonstrativas e riscos psicossociais relacionados ao trabalho.",
 };
 
 export default function AssistentePage() {
@@ -32,10 +32,11 @@ export default function AssistentePage() {
               </h1>
 
               <p className="mt-4 max-w-3xl text-base leading-relaxed text-slate-300 md:text-lg">
-                Conte com orientação educativa para sua trilha de desenvolvimento:
-                segurança digital, phishing, senhas, autenticação e privacidade.
-                Tire também dúvidas sobre jogos, prompts, IA e navegação no
-                Happy Game Hub.
+                Conte uma situação relacionada à segurança digital ou ao ambiente
+                de trabalho. O assistente oferece orientação inicial com base em
+                boas práticas e políticas demonstrativas da empresa fictícia Nexa
+                Solutions, incluindo prevenção de assédio, bullying, abuso e riscos
+                psicossociais relacionados ao trabalho.
               </p>
             </div>
 
@@ -74,9 +75,11 @@ export default function AssistentePage() {
               <h2 className="text-lg font-bold">Limites da ferramenta</h2>
               <p className="mt-3 text-sm leading-relaxed text-slate-400">
                 As perguntas são enviadas à IA quando disponível; conteúdos sensíveis
-                detectados são tratados localmente. A classificação usa regras
-                locais, e as respostas podem conter erros. Em um incidente real,
-                procure a equipe responsável pela segurança ou o suporte do serviço.
+                detectados são tratados localmente. A triagem digital usa regras
+                locais, e as respostas podem conter erros. A orientação não substitui
+                PGR, GRO, avaliação formal de SST ou profissionais de saúde e direito;
+                não oferece diagnóstico, conclusão jurídica nem garantia de conformidade
+                com a NR-1. Procure segurança, RH, SST ou compliance conforme o caso.
               </p>
             </div>
 
