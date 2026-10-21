@@ -114,4 +114,5 @@ continuam pendentes, conforme `ACCESSIBILITY.md`.
   `tests/accessibility/pages.spec.mjs`.
 - Documentação: `README.md`, `docs/COMPETENCIES.md` (novo).
 
-Alterações anteriores foram preservadas. Nenhum commit, merge ou push.
+Este documento descreve a implementação de competências preservada na Fase 6.
+Para a atualização corporativa e as verificações atuais, consulte [FASE_6.md](FASE_6.md).

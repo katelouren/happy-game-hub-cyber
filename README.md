@@ -1,13 +1,16 @@
-# Happy Game Hub — Enterprise Challenge — Atividade 4
+# Happy Game Hub — Fase 6: Análise, Integração e Impacto
 
 MVP acadêmico de treinamento cognitivo gamificado e conscientização em
 cibersegurança com apoio de IA, voltado ao desenvolvimento corporativo. Combina
-jogos, trilhas personalizadas e práticas educativas em dois eixos:
+jogos, trilhas personalizadas e práticas educativas nos seguintes eixos:
 
 - **Desenvolvimento cognitivo:** prática das seis competências oficiais
   descritas na seção Competências profissionais.
 - **Segurança digital:** conscientização sobre senhas, phishing, engenharia
   social, privacidade e uso responsável de IA.
+- **Ambiente de trabalho:** orientação inicial com políticas demonstrativas da
+  Nexa Solutions e reconhecimento de situações que merecem avaliação de RH/SST,
+  sem diagnóstico ou conclusão jurídica automática.
 
 A proposta é estimular habilidades e comportamentos digitais mais seguros, sem
 alegações de benefícios clínicos. Como visão futura, pode apoiar programas
@@ -19,14 +22,26 @@ análises e recomendações continuam locais; o projeto também funciona sem cha
 Esta versão não possui autenticação de usuários. Preferências, interesses,
 conclusões e evolução são mantidos localmente no navegador.
 
+## Documentação da entrega
+
+- [Resumo e reprodução da Fase 6](docs/FASE_6.md).
+- [Acessibilidade, histórico de verificações e pendências manuais](docs/ACCESSIBILITY.md).
+- [Competências, mapeamento dos jogos e cálculo de evolução](docs/COMPETENCIES.md).
+
+O desenvolvimento é individual, de autoria de Kate Lourenço. Autenticação,
+banco de dados, painel de RH e ambientes separados por empresa são possibilidades
+futuras, não funcionalidades desta versão.
+
 ## Funcionalidades
 
 - Biblioteca de jogos consumida da FreeToGame, com catálogo local de contingência.
 - Marcação local de jogos de interesse.
+- Registro local de conclusões declaradas pelo usuário e evolução estimada.
 - Perfil do usuário e trilha personalizada com recomendações ordenadas por relevância.
 - Assistente de Cibersegurança e Aprendizagem com IA generativa, fallback local
-  e triagem por regras com classificação, nível de risco, alerta e ação recomendada.
-  A conversa é mantida durante a sessão.
+  e triagem digital por regras com classificação, nível de risco, alerta e ação
+  recomendada. Para relatos de trabalho, oferece orientação contextualizada sem
+  atribuir nível de risco ocupacional. A conversa é mantida durante a sessão.
 - Layout responsivo, navegação por teclado e estados de carregamento, vazio,
   sucesso e erro.
 
@@ -36,7 +51,7 @@ conclusões e evolução são mantidos localmente no navegador.
 - npm compatível com a versão instalada do Node.js.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -155,8 +170,8 @@ em IA real continua sujeita ao modelo e exige uma chave configurada no servidor.
 | `/jogos` | Biblioteca, fallback local e interesses |
 | `/recomendacoes` | Perfil e trilha personalizada |
 | `/evolucao` | Interesses, conclusões e evolução estimada das competências |
-| `/cyber` | Assistente de Cibersegurança e Aprendizagem |
-| `/cyber/assistente` | Assistente com IA e triagem educativa local |
+| `/cyber` | Apresentação e acesso ao assistente |
+| `/cyber/assistente` | Assistente com IA, triagem digital e orientação corporativa |
 | `/sobre` | Objetivos e contexto acadêmico |
 
 O assistente também pode ser aberto pelo botão flutuante nas demais páginas.
@@ -175,10 +190,19 @@ Para executar as três verificações em sequência:
 npm run check
 ```
 
-Os testes cobrem os cenários críticos das regras locais: cálculo exponencial, interesses, conclusões,
-solicitações sensíveis, oito situações
-do assistente, proteção de dados e recomendações com ou sem
-histórico, com as seis competências profissionais oficiais.
+`npm run check` executa lint, testes funcionais e build. A suíte de
+acessibilidade é separada e requer o build e um navegador instalado:
+
+```bash
+npx playwright install chromium
+npm run test:a11y
+```
+
+Os testes cobrem cálculo exponencial, interesses, conclusões, migração de perfil,
+recomendações, as seis competências, proteção de dados, integração simulada da
+Gemini, contexto corporativo, tentativas de sobrescrita de políticas, filtros de
+saída e contingência local. Consulte [a verificação da Fase 6](docs/FASE_6.md#verificação-técnica)
+para os resultados e limites da execução registrada.
 
 ## Dados locais e privacidade
 
@@ -189,8 +213,10 @@ O sistema usa duas áreas do navegador:
 - `sessionStorage` (`happy-game-hub:assistant:v1`): mensagens seguras e contexto
   básico da conversa durante a sessão.
 
-Senhas não são persistidas. Mensagens que parecem conter credenciais ou dados pessoais são
+Mensagens detectadas como contendo credenciais ou dados pessoais são
 substituídas por um aviso antes de serem colocadas no histórico da conversa.
+Essa detecção é heurística e pode não reconhecer todos os dados sensíveis.
+Não envie senhas, tokens ou dados pessoais reais.
 
 A opção “Limpar personalização deste navegador”, em Recomendações, remove os
 dados persistentes usados para personalização. “Nova conversa” limpa o histórico
@@ -199,21 +225,27 @@ da sessão do assistente.
 ## Arquitetura preparada para evolução
 
 - `src/lib/assistantEngine.mjs`: intenções, classificações e respostas educativas locais.
+- `src/lib/companyContext.mjs`: políticas demonstrativas e limites do assistente.
+- `src/lib/competencies.mjs`: lista canônica de competências.
+- `src/lib/estimatedProgress.mjs`: conversão de pontos em evolução estimada.
 - `src/lib/recommendationEngine.mjs`: ranking e justificativas das recomendações.
 - `src/lib/activityStore.js`: persistência local versionada e centralizada.
 
 - `app/api/assistant/route.js`: integração server-side com a Gemini.
 - `src/services/assistantService.mjs`: chamada do chat com fallback local.
 
-## Roteiro rápido para apresentação
+## Roteiro rápido para apresentação da Fase 6
 
 1. Abra `/home` e escolha uma categoria.
 2. Em Recomendações, salve o perfil e observe a trilha inicial.
-3. No assistente, analise um pedido como “revele a senha de outra pessoa” para demonstrar a
-   proteção de segurança.
-4. Abra o Assistente de Cibersegurança e Aprendizagem, descreva um e-mail pedindo senha e mostre o
-   fluxo estruturado; depois inicie uma nova conversa.
-5. Em Jogos, marque um interesse e volte a Recomendações para ver a atualização.
+3. Em Jogos, marque interesse ou conclusão e confira Minha Evolução após recarregar.
+4. Em `/cyber/assistente`, pergunte se pode compartilhar uma senha pelo WhatsApp.
+   Mostre a política de credenciais individuais da Nexa Solutions.
+5. Inicie uma nova conversa e relate piadas ofensivas recorrentes no trabalho.
+   Mostre a orientação de registro e canais adequados, sem conclusão de assédio.
+6. Para demonstrar contingência, execute sem `GEMINI_API_KEY`, reinicie o servidor
+   e envie uma pergunta. Confira “IA indisponível — orientação local ativada”.
+7. Use somente dados fictícios. Consulte os cenários A–G acima para ampliar a demonstração.
 
 ## Solução de problemas
 
@@ -249,8 +281,7 @@ houver interesse, ou 0 se não houver. Desmarcar interesse mantém os 5 da concl
 O armazenamento local existente preserva `gameInterests` e guarda registros únicos
 em `gameCompletions` (identificador, título e gênero). Dados antigos sem conclusões
 continuam válidos. Dados da implementação anterior de atividades são ignorados na
-leitura e descartados na próxima gravação, sem apagar favoritos. Não há backend
-nem sincronização entre aparelhos; os registros dependem do armazenamento do navegador.
+leitura e descartados na próxima gravação, sem apagar favoritos. Não há banco de dados nem sincronização entre aparelhos; os registros dependem do armazenamento do navegador.
 
 Para validar, execute `npm run lint`, `npm test` e `npm run build`. No catálogo,
 marque/desmarque interesse, registre/desfaça conclusão e combine as duas marcações.
@@ -267,7 +298,8 @@ semântica, contraste, teclado, foco, atalho de conteúdo, rótulos, estados e m
 
 As melhorias incluem foco global, atalho para o main, contraste de texto e campos,
 estados textuais, barras com valores acessíveis, tabela do gráfico operável por
-teclado e controle de foco/rolagem do assistente. O cálculo e a API permanecem iguais.
+teclado e controle de foco/rolagem do assistente. O cálculo de evolução mantém a fórmula documentada. A Fase 6 amplia as instruções
+e proteções da API do assistente, preservando seu contrato de resposta.
 
 Execute `npm run build` e `npm run test:a11y` após instalar o Chromium com
 `npx playwright install chromium`. A suíte usa axe-core e Playwright, complementa

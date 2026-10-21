@@ -5,6 +5,17 @@ pelas verificações descritas abaixo. Isso não é certificação nem declaraç
 conformidade integral. A avaliação humana, especialmente com leitores de tela,
 continua necessária.
 
+## Estado atual da Fase 6 — revisão de 20/10/2026
+
+A suíte atual define 16 testes de navegador, incluindo orientação de trabalho por
+teclado, persistência do contexto e identificação da contingência. Nesta revisão,
+88 testes funcionais, lint e build passaram. A suíte de acessibilidade não foi
+reexecutada porque o download do Chromium ficou truncado no ambiente.
+
+Assim, 16 é a contagem de testes definidos, não de aprovações desta revisão.
+Os resultados das seções datadas abaixo pertencem a versões anteriores.
+Consulte [a reprodução e os resultados da Fase 6](FASE_6.md#verificação-técnica).
+
 ## Escopo e critérios trabalhados
 
 - 1.1.1: capas identificadas; imagem decorativa e ícones ocultos das tecnologias assistivas.
@@ -26,7 +37,7 @@ O campo de mensagem permanece focado durante a espera; respostas não roubam foc
 
 ## Executar verificações
 
-Requer Node 20 ou superior (dependência de desenvolvimento do Playwright).
+Requer Node 20.9 ou superior, conforme os requisitos do projeto.
 
 ```sh
 npm ci
@@ -59,6 +70,8 @@ Suíte `tests/accessibility/pages.spec.mjs`, Chrome, axe-core e Playwright:
 - Chat aberto, envio simulado, foco preservado, Esc e saída com Tab.
 - Erros do chat, foco visível, Shift+Tab e valores das barras.
 - Reflow em larguras CSS de 720, 375 e 320 pixels e preferência de movimento reduzido.
+- Na Fase 6, relato de trabalho por teclado em contingência, canais de orientação,
+  ausência de classificação ocupacional e persistência do contexto após recarregar.
 
 Uma viewport de 720 pixels reproduz a largura útil de uma janela de 1440 pixels
 com zoom de 200%, mas não substitui o teste do zoom real do navegador. Axe não
